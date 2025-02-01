@@ -62,14 +62,6 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShow
         imageView = ImageView(this)
         imageView?.setImageResource(R.drawable.icon_person_24)
 
-//        val foregroundColorSpan = ForegroundColorSpan(Color.WHITE)
-//        val spannableString = SpannableString(getString(R.string.app_name))
-//        spannableString.setSpan(
-//            foregroundColorSpan,
-//            0,
-//            spannableString.length,
-//            Spannable.SPAN_INCLUSIVE_INCLUSIVE
-//        )
 
         this@AppActivity.onBackPressedDispatcher.addCallback(this@AppActivity, callback)
 
@@ -81,7 +73,6 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShow
         actionBar?.apply {
             setDisplayShowCustomEnabled(true)
             setCustomView(imageView, lp)
-//            title = spannableString
         }
 
 
@@ -132,8 +123,6 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShow
             }.show()
 
         }
-        //findNavController(R.id.nav_host_fragment).navigate(R.id.screenPosts)
-
     }
 
     override fun returnDialogValue(select: Int) {
@@ -206,23 +195,6 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShow
         if (currentFragment is UserAccount) currentFragment.getIdJob(id)
     }
 
-
-    //    override fun onBackPressed() {
-//
-//        when (val currentFragment = supportFragmentManager.currentNavigationFragment) {
-//            is EventView -> {
-////                println("BACK EventView")
-//                currentFragment.stopMedia()
-//            }
-//
-//            is PostView -> {
-////                println("BACK PostView")
-//                currentFragment.stopMedia()
-//            }
-//        }
-//        super.onBackPressed()
-//
-//    }
     private val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             when (val currentFragment = supportFragmentManager.currentNavigationFragment) {
@@ -237,7 +209,6 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShow
                 is ScreenPosts -> {
                     finish()
                 }
-//                else->{println("currentFragment $currentFragment")}
             }
             findNavController(R.id.nav_host_fragment).navigateUp()
         }
