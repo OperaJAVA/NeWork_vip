@@ -1,0 +1,19 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext.kotlin_version = "1.9.0"
+    ext.hilt_version = "2.49"
+    ext.android_gradle_version = "8.1.0"
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        // другие classpath зависимост...
+    }
+}
+
+plugins {
+    id 'com.android.library' version '8.8.0' apply false
+    id 'com.android.application' version '8.8.0' apply false
+    id 'org.jetbrains.kotlin.android' version '2.0.21' apply false
+    id 'org.jetbrains.kotlin.kapt' version '1.9.10' apply false
+//    id 'com.google.gms.google-services' version '4.4.0' apply false
+    id 'com.google.dagger.hilt.android' version "$hilt_version" apply false
+}

@@ -1,0 +1,16 @@
+<resources>
+    <dimen name="min_space">5dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="common_spacing">16dp</dimen>
+    <dimen name="button_text">18sp</dimen>
+    <dimen name="menu_size">48dp</dimen>
+    <dimen name="posts_avatar_size">48dp</dimen>
+    <dimen name="favorite_size">26dp</dimen>
+    <dimen name="view_spacing">50dp</dimen>
+    <dimen name="count_spacing">5dp</dimen>
+    <dimen name="icon_button_padding">12dp</dimen>
+    <dimen name="icon_button_min_size">48dp</dimen>
+    <dimen name="wide_text_field">370dp</dimen>
+    <dimen name="wide_menu_btn">50dp</dimen>
+    <dimen name="wide_date_field">170dp</dimen>
+</resources>

@@ -1,0 +1,12 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.NeWork" parent="Theme.MaterialComponents.DayNight">
+        <!-- Customize your light theme here. -->
+         <item name="colorPrimary">#714CFF</item>
+<!--        <item name="android:textColorPrimary">@color/actionbar_text_color</item>-->
+
+    </style>
+
+    <style name="Theme.NeWork" parent="Base.Theme.NeWork"/>
+
+</resources>
