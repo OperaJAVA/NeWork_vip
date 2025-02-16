@@ -288,14 +288,9 @@ class NewPostFrag : Fragment() {
 
         viewModelLays.newStatusViewsModel.observe(viewLifecycleOwner) { status ->
             showViews(status)
-//            println("status $status, type ${viewModelLays.typeAttach.value}")
         }
 
         viewModelLays.photo.observe(viewLifecycleOwner) {
-//            if (it == viewModelLays.noPhoto) {
-//                binding.content.focusAndShowKeyboard()
-//                return@observe
-//            }
 
             binding.content.clearFocus()
             if (it.file == null) {
@@ -388,8 +383,6 @@ class NewPostFrag : Fragment() {
                 }
 
                 R.id.add_file -> {
-//                    val uri = Uri.parse("")
-//                    getFileName(uri, requireContext())
                     viewModelLays.setLoadingGroup()
                     true
                 }
@@ -454,7 +447,6 @@ class NewPostFrag : Fragment() {
     }
 
     private fun cleanContent() {
-        //multiPartBody = null
         viewModelLays.cleanPhoto()
         viewModelLays.cleanMedia()
         viewModelLays.setTypeAttach(null)
@@ -464,7 +456,7 @@ class NewPostFrag : Fragment() {
 
     private fun getIntent() = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         addCategory(Intent.CATEGORY_OPENABLE)
-        type = "*/*" // That's needed for some reason, crashes otherwise
+        type = "*/*"
         putExtra(
             Intent.EXTRA_MIME_TYPES, arrayOf(
                 "audio/mpeg",
