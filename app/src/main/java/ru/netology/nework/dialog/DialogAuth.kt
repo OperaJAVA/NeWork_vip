@@ -14,10 +14,6 @@ import ru.netology.nework.viewmodel.AuthViewModel.Companion.DIALOG_IN
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.DIALOG_OUT
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.DIALOG_REG
 
-//const val DIALOG_OUT = 1
-//const val DIALOG_IN = 2
-//const val DIALOG_REG = 3
-
 class DialogAuth : DialogFragment() {
     private var sel = 0
     private var message = ""
@@ -47,9 +43,7 @@ class DialogAuth : DialogFragment() {
             textDialog.text = message
             when (sel) {
                 DIALOG_IN -> {
-                    //textDialog.text = "Для установки лайков нужна авторизация, выполнить вход?"
                     btnSignin.setOnClickListener {
-                        //findNavController().navigate(R.id.authFragment)
                         backValue?.returnDialogValue(DIALOG_IN)
                         dismiss()
                     }
@@ -60,7 +54,6 @@ class DialogAuth : DialogFragment() {
                 }
 
                 DIALOG_OUT -> {
-//                    textDialog.text = "Вы хотите удалить регистрацию?"
                     btnSignin.text = getString(R.string.yes)
                     btnSignup.text = getString(R.string.no)
                     btnSignin.setOnClickListener {
@@ -73,20 +66,12 @@ class DialogAuth : DialogFragment() {
                 }
 
                 DIALOG_REG -> {
-//                    textDialog.text = "Регистрация пользователя"
                     btnSignin.setOnClickListener {
                         backValue?.returnDialogValue(DIALOG_REG)
                         dismiss()
                     }
-
                 }
             }
-
-//            btnNo.setOnClickListener {
-//                dismiss()
-//            }
-
-
         }
         return binding.root
     }

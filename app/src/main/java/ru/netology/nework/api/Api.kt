@@ -21,81 +21,6 @@ interface ApiService {
     // one user (Wall)
     @GET("/api/{authorId}/wall")
     suspend fun getPostsUser(@Path("authorId") authorId: Long): Response<List<Post>>
-//
-//    @GET("/api/{authorId}/wall/{id}/newer")
-//    suspend fun getPostsUserNewer(
-//        @Path("authorId") authorId: Long,
-//        @Path("id") id: Long
-//    ): Response<List<Post>>
-//
-//    @GET("/api/{authorId}/wall/{id}/before")
-//    suspend fun getPostsUserBefore(
-//        @Path("authorId") authorId: Long,
-//        @Path("id") id: Long,
-//        @Query("count") count: Int,
-//    ): Response<List<Post>>
-//
-//    @GET("/api/{authorId}/wall/{id}/after")
-//    suspend fun getPostsUserAfter(
-//        @Path("authorId") authorId: Long,
-//        @Path("id") id: Long,
-//        @Query("count") count: Int,
-//    ): Response<List<Post>>
-//
-//    @GET("/api/{authorId}/wall/{id}")
-//    suspend fun getPostsUserId(
-//        @Path("authorId") authorId: Long,
-//        @Path("id") id: Long
-//    ): Response<Post>
-//
-//    @GET("/api/{authorId}/wall/latest")
-//    suspend fun getPostsUserLatest(
-//        @Path("authorId") authorId: Long,
-//        @Query("count") count: Int,
-//    ): Response<List<Post>>
-
-//    @POST("/api/{authorId}/wall/{id}/likes")
-//    suspend fun likeById(@Path("id") id: Long): Response<Post>
-//
-//    @DELETE("/api/{authorId}/wall/{id}/likes")
-//    suspend fun removeById(@Path("id") id: Long): Response<Post>
-
-
-//    //My Wall
-//    @GET("/api/my/wall")
-//    suspend fun getMyWall(): Response<List<Post>>
-//
-//    @GET("/api/my/wall/{id}/newer")
-//    suspend fun getMyWallNewer(@Path("id") id: Long): Response<List<Post>>
-//
-//    @GET("/api/my/wall/{id}/before")
-//    suspend fun getMyPostsBefore(
-//        @Path("id") id: Long,
-//        @Query("count") count: Int,
-//    ): Response<List<Post>>
-//
-//    @GET("/api/my/wall/{id}/after")
-//    suspend fun getMyPostsAfter(
-//        @Path("id") id: Long,
-//        @Query("count") count: Int,
-//    ): Response<List<Post>>
-//
-//    @GET("/api/my/wall/{id}")
-//    suspend fun getPostsUserId(
-//        @Path("id") id: Long
-//    ): Response<Post>
-//
-//    @GET("/api/my/wall/latest")
-//    suspend fun getMyPostsLatest(
-//        @Query("count") count: Int,
-//    ): Response<List<Post>>
-//
-//    @POST("/api/my/wall/{id}/likes")
-//    suspend fun likeMyById(@Path("id") id: Long): Response<Post>
-//
-//    @DELETE("/api/my/wall/{id}/likes")
-//    suspend fun removeMyById(@Path("id") id: Long): Response<Post>
-
 
     // Users
     @GET("/api/users")
@@ -124,9 +49,6 @@ interface ApiService {
     @GET("/api/posts")
     suspend fun getPosts(): Response<List<Post>>
 
-//    @GET("/api/posts/{id}/newer")
-//    suspend fun getPostsNewer(@Path("id") id: Long): Response<List<Post>>
-
     @GET("/api/posts/{id}/before")
     suspend fun getPostsBefore(
         @Path("id") id: Long,
@@ -138,11 +60,6 @@ interface ApiService {
         @Path("id") id: Long,
         @Query("count") count: Int,
     ): Response<List<Post>>
-
-//    @GET("/api/posts/{id}")
-//    suspend fun getPostsId(
-//        @Path("id") id: Long
-//    ): Response<Post>
 
     @GET("/api/posts/latest")
     suspend fun getPostsLatest(

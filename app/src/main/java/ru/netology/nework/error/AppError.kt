@@ -25,4 +25,3 @@ data object NetworkError : AppError("error_network")
 data object DbError : AppError("error_db")
 data object UnknownError : AppError("error_unknown")
 
-//object AuthorisationError : AppError("error Authorisation")

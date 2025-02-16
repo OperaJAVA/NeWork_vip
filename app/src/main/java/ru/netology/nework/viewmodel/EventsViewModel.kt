@@ -32,9 +32,6 @@ class EventsViewModel @Inject constructor(
     private val repositoryPosts: PostsRepository
 ) : ViewModel() {
 
-//    val events: LiveData<List<Event>> = repositoryEvents.eventsDb
-//        .asLiveData(Dispatchers.IO)
-
     val events = repositoryEvents.eventsDb
         .map {event ->
             event.map {
@@ -60,21 +57,6 @@ class EventsViewModel @Inject constructor(
             repositoryEvents.getEventsDB()
         }
     }
-
-//    fun loadEvents() {
-//        _dataState.value = FeedModelState(loading = true)
-//        viewModelScope.launch {
-//            try {
-//                repositoryEvents.getEvents()
-//                _dataState.value = FeedModelState()
-//            } catch (e: Exception) {
-//                if (e.javaClass.name == "ru.netology.nework.error.ApiError403") {
-//                    _dataState.value = FeedModelState(error403 = true)
-//                } else if (e.javaClass.name == "ru.netology.nework.error.NetworkError")
-//                    _dataState.value = FeedModelState(errorNetWork = true)
-//            }
-//        }
-//    }
 
     fun likeEvent(event: Event, like: Boolean) {
         _dataState.value = FeedModelState(loading = true)
@@ -133,7 +115,6 @@ class EventsViewModel @Inject constructor(
         }
     }
 
-    //deleteEvent
     fun removeEvent(event: Event) {
         _dataState.value = FeedModelState(loading = true)
         viewModelScope.launch {

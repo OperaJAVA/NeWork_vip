@@ -36,8 +36,6 @@ class AdapterEventView @Inject constructor(
     @SuppressLint("ClickableViewAccessibility")
     fun bind(event: Event) {
         with(binding) {
-//            println("eventOwner ${event.eventOwner}")
-//            println("event $event")
             author.text = event.author
             published.text = AndroidUtils.getTimePublish(event.published)
             infoDate.text = event.typeMeeting.toString()
@@ -65,7 +63,6 @@ class AdapterEventView @Inject constructor(
 
             Glide.with(avatar)
                 .load(event.authorAvatar)
-//                .placeholder(R.drawable.ic_loading_100dp)
                 .error(R.drawable.icon_person_24)
                 .timeout(45_000)
                 .circleCrop()
@@ -99,7 +96,6 @@ class AdapterEventView @Inject constructor(
                         Glide.with(imageView)
                             .load(event.attachment.url)
                             .placeholder(R.drawable.ic_loading_100dp)
-                            //.error(R.drawable.ic_error_100dp)
                             .timeout(45_000)
                             .into(imageView)
                     }
@@ -110,7 +106,6 @@ class AdapterEventView @Inject constructor(
                         Glide.with(imageView)
                             .load(event.attachment.url)
                             .placeholder(R.drawable.ic_loading_100dp)
-                            //.error(R.drawable.ic_error_100dp)
                             .timeout(180_000)
                             .into(imageView)
 

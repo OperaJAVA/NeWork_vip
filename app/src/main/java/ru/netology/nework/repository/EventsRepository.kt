@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 import ru.netology.nework.dto.Event
 
 interface EventsRepository {
-    //    val eventsDb: Flow<List<Event>>
     val eventsDb: Flow<PagingData<Event>>
     val eventsFlow: Flow<List<Event>>
     suspend fun getEvents()

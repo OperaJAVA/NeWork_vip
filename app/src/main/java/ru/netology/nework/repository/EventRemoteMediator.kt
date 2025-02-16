@@ -87,17 +87,6 @@ class EventRemoteMediator @Inject constructor(
                         }
                     }
 
-//                    LoadType.PREPEND -> {
-//                        if (body.isNotEmpty()) {
-//                            eventRemoteKeyDao.insert(
-//                                EventRemoteKeyEntity(
-//                                    type = EventRemoteKeyEntity.KeyType.AFTER,
-//                                    id = body.first().id,
-//                                )
-//                            )
-//                        }
-//                    }
-
                     LoadType.APPEND -> {
                         eventRemoteKeyDao.insert(
                             EventRemoteKeyEntity(

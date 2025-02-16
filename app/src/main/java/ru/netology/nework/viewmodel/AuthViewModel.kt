@@ -78,11 +78,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _dataState.value = FeedModelState(loading = true)
-                val user = repository.userAuth(login, pass) // send to server
-
-//                user?.let {
-//                    appAuth.setAuth(user.id, login, pass, user.token)
-//                }
+                val user = repository.userAuth(login, pass)
 
                 if (user?.id != 0L && user?.token != null) {
                     val myAcc = repositoryUser.getUser(user.id)

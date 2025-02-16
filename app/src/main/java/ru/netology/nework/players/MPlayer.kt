@@ -17,13 +17,11 @@ class MPlayer {
             if (player == null) {
                 player = MediaPlayer().apply {
                     this.setDataSource(
-//                        "$URL_LOAD_SONG$link"
                         link
                     )
                     this.setOnPreparedListener {
                         dt.getDuration(it.duration)
                         it.start()
-                        //it.seekTo(472000-5000)
                     }
                     this.prepareAsync()
                     this.setOnCompletionListener{

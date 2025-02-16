@@ -35,10 +35,6 @@ class UsersRepositoryImpl @Inject constructor(
     override val allUsers: Flow<List<UserResponse>>
         get() = _allUsers
 
-//    private var _userJob = MutableStateFlow<List<Job>>(emptyList<Job>())
-//    override val userJob: Flow<List<Job>>
-//        get() = _userJob
-
     override suspend fun getUsers() {
         try {
             val response = apiService.getUsers()
@@ -156,24 +152,4 @@ class UsersRepositoryImpl @Inject constructor(
             throw UnknownError
         }
     }
-
-//    interface GetMentionUser {
-//        fun getUser(user: UserResponse)
-//    }
-//
-//    override suspend fun getMentionsUsers(userId: Long, mention: GetMentionUser) {
-//        try {
-//            CoroutineScope(Dispatchers.Default).launch {
-//
-//                val user = daoUser.getUser(userId).map { it.toDto() }
-//                user.flowOn(Dispatchers.IO).collect {
-//                    mention.getUser(it)
-//                    this.cancel()
-//                }
-//            }
-//        } catch (e: Exception) {
-//            throw DbError
-//        }
-//    }
-
 }
