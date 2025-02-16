@@ -103,7 +103,6 @@ class UserPostViewHolder(
                 root.setOnClickListener {
                     onUserPostsListener.openCardPost(post)
                 }
-//                menu.isVisible = post.authorId == AuthViewModel.myID && AuthViewModel.userAuth
                 menu.isVisible = post.postOwner && AuthViewModel.userAuth
 
                 menu.setOnClickListener {

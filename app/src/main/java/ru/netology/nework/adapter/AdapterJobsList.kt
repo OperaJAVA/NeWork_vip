@@ -48,8 +48,6 @@ class JobViewHolder(
             }
         }
     }
-// "${job.start} - ${job.finish}"
-//"${ getTimePublish(job.start) } - ${ getTimePublish(job.finish) }"
 }
 
 class JobDiffCallback: DiffUtil.ItemCallback<Job>() {

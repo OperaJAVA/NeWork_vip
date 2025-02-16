@@ -37,10 +37,6 @@ class AdapterPostView @Inject constructor(
 
     @SuppressLint("ClickableViewAccessibility", "SuspiciousIndentation")
     fun bind(post: Post) {
-        //       yandexMapsKitFactory = MapKitFactory.getInstance()
-//        mapView = binding.map
-//        println("post Id ${post.id} postAttach ${post.attachment}")
-//        println("post likeOwnerIds ${post.likeOwnerIds}, post mentionIds ${post.mentionIds}, users ${post.users}")
         binding.apply {
             author.text = post.author
             published.text = AndroidUtils.getTimePublish(post.published)
@@ -119,7 +115,6 @@ class AdapterPostView @Inject constructor(
 
             Glide.with(avatar)
                 .load(post.authorAvatar)
-//                .placeholder(R.drawable.ic_loading_100dp)
                 .error(R.drawable.icon_person_24)
                 .timeout(45_000)
                 .circleCrop()

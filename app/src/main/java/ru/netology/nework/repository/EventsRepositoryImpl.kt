@@ -36,10 +36,6 @@ class EventsRepositoryImpl @Inject constructor(
     appDb: AppDb,
 ) : EventsRepository {
 
-//    private val _eventsDb = daoEvents.getEvents().map(List<EventEntity>::toDto)
-//    override val eventsDb: Flow<List<Event>>
-//        get() = _eventsDb
-
     private val _eventsFlow = MutableStateFlow(emptyList<Event>())
     override val eventsFlow: Flow<List<Event>>
         get() = _eventsFlow.asStateFlow()
@@ -190,8 +186,6 @@ class EventsRepositoryImpl @Inject constructor(
                     else -> throw ApiError(response.code(), response.message())
                 }
             }
-
-//            val post = response.body() ?: throw ApiError(response.code(), response.message())
 
         } catch (e: IOException) {
             throw NetworkError

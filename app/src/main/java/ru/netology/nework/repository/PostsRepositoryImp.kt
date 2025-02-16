@@ -46,9 +46,6 @@ class PostsRepositoryImp @Inject constructor(
         get() = _postsFlow.asStateFlow()
 
     private val _posts = dao.getAllPosts().map(List<PostEntity>::toDto)
-//    override val postsDb: Flow<List<Post>>
-//        get() = _posts
-
 
     @OptIn(ExperimentalPagingApi::class)
     override val postsDb: Flow<PagingData<Post>> = Pager(
@@ -73,7 +70,6 @@ class PostsRepositoryImp @Inject constructor(
     override suspend fun getPosts() {
         try {
 
-//            val response = apiService.getPostsBefore(50, 20)
             val response = apiService.getPosts()
 
             if (!response.isSuccessful) {
@@ -88,7 +84,6 @@ class PostsRepositoryImp @Inject constructor(
                     it.copy(postOwner = true)
                 } else it
             }
-//            _posts.forEach { println("${it.authorId} ${it.postOwner}  $myID") }
             dao.insert(
                 _posts.toEntity()
             )
@@ -114,9 +109,6 @@ class PostsRepositoryImp @Inject constructor(
                 }
             }
             val posts = response.body() ?: throw ApiError(response.code(), response.message())
-//            dao.insert(
-//                posts.toEntity()
-//            )
             val _posts = posts.map {
                 if (myID == it.authorId) {
                     it.copy(postOwner = true)
@@ -239,8 +231,6 @@ class PostsRepositoryImp @Inject constructor(
                     else -> throw ApiError(response.code(), response.message())
                 }
             }
-//
-//                val user = response.body() ?: throw ApiError(response.code(), response.message())
             return response.body() ?: throw ApiError(response.code(), response.message())
         } catch (e: IOException) {
             throw NetworkError
@@ -313,8 +303,6 @@ class PostsRepositoryImp @Inject constructor(
                     else -> throw ApiError(response.code(), response.message())
                 }
             }
-
-//            val post = response.body() ?: throw ApiError(response.code(), response.message())
 
         } catch (e: IOException) {
             throw NetworkError

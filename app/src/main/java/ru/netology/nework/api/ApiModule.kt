@@ -38,7 +38,6 @@ class ApiModule {
         .addInterceptor { chain ->
             appAuth.authState.value.token?.let { token ->
                 val newRequest = chain.request().newBuilder()
-                    //.addHeader("Authorization", token)
                     .addHeader("Api-Key", API_KEY)
                     .addHeader("Authorization", token)
                     .build()
@@ -46,7 +45,6 @@ class ApiModule {
             }
             val newRequest = chain.request().newBuilder()
 
-                //.addHeader("Authorization", token)
                 .addHeader("Api-Key", API_KEY)
                 .build()
             return@addInterceptor chain.proceed(newRequest)

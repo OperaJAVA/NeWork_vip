@@ -29,15 +29,7 @@ import javax.inject.Inject
 
 class PostsViewModel @Inject constructor(
     private val repository: PostsRepository,
-//    private val repoUsers: UsersRepository,
 ) : ViewModel() {
-
-//    val data: LiveData<List<Post>> = repository.postsDb
-//        .asLiveData(Dispatchers.IO)
-
-//    val data: Flow<PagingData<Post>> = repository.postsDb
-//        .flowOn(Dispatchers.Default)
-
 
     val data = repository.postsDb.map { post ->
         post.map { it.copy(postOwner = it.authorId == myID) }
@@ -58,7 +50,6 @@ class PostsViewModel @Inject constructor(
         get() = repository.postsFlow.asLiveData(Dispatchers.Default)
 
     init {
-//        loadPosts()
         getPosts()
     }
 
@@ -67,21 +58,6 @@ class PostsViewModel @Inject constructor(
             repository.getPostsDB()
         }
     }
-
-//    fun loadPosts() {
-//        _dataState.value = FeedModelState(loading = true)
-//        viewModelScope.launch {
-//            try {
-//                repository.getPosts()
-//                _dataState.value = FeedModelState()
-//            } catch (e: Exception) {
-//                if (e.javaClass.name == "ru.netology.nework.error.ApiError403") {
-//                    _dataState.value = FeedModelState(error403 = true)
-//                } else if (e.javaClass.name == "ru.netology.nework.error.NetworkError")
-//                    _dataState.value = FeedModelState(errorNetWork = true)
-//            }
-//        }
-//    }
 
     fun getUserPosts(id: Long) {
         _dataState.value = FeedModelState(loading = true)
@@ -131,17 +107,8 @@ class PostsViewModel @Inject constructor(
         }
     }
 
-//    fun changePhoto(uri: Uri?, file: File?) {
-//        _photo.value = PhotoModel(uri, file)
-//    }
-//
-//    fun clearPhoto() {
-//        _photo.value = noPhoto
-//    }
-
     fun like(post: Post, like: Boolean) {
         _dataState.value = FeedModelState(loading = true)
-//        println("post ${post.id}")
         viewModelScope.launch {
             try {
                 repository.likePost(post.id, like)
@@ -195,24 +162,4 @@ class PostsViewModel @Inject constructor(
         list?.let { _userWall.value = it }
 
     }
-
-//    fun getPost(id: Long) {
-//
-//    }
-
-//    fun setTypeAttach(attach: AttachmentType?) {
-//        _typeAttach.value = attach
-//    }
-
-
-//
-//    fun setStatusViews(newStatus: StatusModelViews) {
-//        _newStatusViewsModel.value = newStatus
-//    }
-//
-//    fun setLocation(point: Point) {
-//        _location.value = point
-//    }
-
-
 }

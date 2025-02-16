@@ -57,7 +57,6 @@ class AuthFragment : Fragment() {
                 }
             }
 
-
         }
 
         viewModel.authState.observe(viewLifecycleOwner) { auth ->
@@ -74,7 +73,6 @@ class AuthFragment : Fragment() {
 
         viewModel.dataState.observe(viewLifecycleOwner) {
             if (AuthViewModel.userAuth) {
-//                viewModel.
                 showBar("Выполнен вход в аккаунт")
                 //findNavController().popBackStack()
                 findNavController().navigateUp()
@@ -83,7 +81,6 @@ class AuthFragment : Fragment() {
             if (it.error404) showBar("Пользователь не зарегистрирован!")
             if (it.error) showBar("Проверьте ваше подключение к сети!")
             binding.statusAuth.isVisible = it.loading
-//            println("it = $it")
         }
         return binding.root
     }

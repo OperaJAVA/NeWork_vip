@@ -29,12 +29,6 @@ class SpacePhoto : Fragment() {
             .error(R.drawable.err_load)
             .into(binding.viewSpaceFoto)
 
-//        uri?.let {
-//            with(binding){
-//                viewSpaceFoto.settings.builtInZoomControls = true
-//                viewSpaceFoto.loadUrl(uri)
-//            }
-//        }
         return binding.root
     }
 

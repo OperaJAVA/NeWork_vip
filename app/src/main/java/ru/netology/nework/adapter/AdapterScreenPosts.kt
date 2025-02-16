@@ -43,7 +43,6 @@ class PostViewHolder(
     private val onIteractionListener: OnIteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post?) {
-//        println("Post ${post?.id}")
         post?.let {
             binding.apply {
                 author.text = post.author
@@ -103,7 +102,6 @@ class PostViewHolder(
                 root.setOnClickListener {
                     onIteractionListener.openCardPost(post)
                 }
-//                menu.isVisible = post.authorId == AuthViewModel.myID && AuthViewModel.userAuth
                 menu.isVisible = post.postOwner && AuthViewModel.userAuth
 
                 menu.setOnClickListener {

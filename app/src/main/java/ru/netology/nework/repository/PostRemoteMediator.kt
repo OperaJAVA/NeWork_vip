@@ -90,17 +90,6 @@ class PostRemoteMediator @Inject constructor(
                         }
                     }
 
-//                    LoadType.PREPEND -> {
-//                        if (body.isNotEmpty()) {
-//                            postRemoteKeyDao.insert(
-//                                PostRemoteKeyEntity(
-//                                    type = PostRemoteKeyEntity.KeyType.AFTER,
-//                                    id = body.first().id,
-//                                )
-//                            )
-//                        }
-//                    }
-
                     LoadType.APPEND -> {
                         postRemoteKeyDao.insert(
                             PostRemoteKeyEntity(

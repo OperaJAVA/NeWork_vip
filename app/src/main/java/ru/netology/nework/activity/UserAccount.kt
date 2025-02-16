@@ -54,11 +54,7 @@ class UserAccount : Fragment() {
     ): View {
 
         val binding = UserAccountBinding.inflate(layoutInflater)
-//        var user = arguments?.userArg?:{
-//
-//        }
         val idUser = arguments?.userArg?.id!!
-//        println("idUser $idUser")
         nameLoginUser =
             "${arguments?.userArg?.name.toString()} / ${arguments?.userArg?.login.toString()}"
 
@@ -154,7 +150,6 @@ class UserAccount : Fragment() {
         }
 
         viewModelUser.userAccount.observe(viewLifecycleOwner) { user ->
-//            println("avatar ${user.avatar}")
             with(binding) {
                 Glide.with(imageAvatar)
                     .load(user.avatar)
@@ -193,9 +188,6 @@ class UserAccount : Fragment() {
             viewModelPosts.takePosts(posts.filter { it.authorId == idUser })
         }
 
-//        viewModelPosts.data.observe(viewLifecycleOwner) { posts ->
-//            viewModelPosts.takePosts(posts.filter { it.authorId == idUser })
-//        }
 
         viewModelUser.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading

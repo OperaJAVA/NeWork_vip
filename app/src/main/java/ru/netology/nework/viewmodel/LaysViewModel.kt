@@ -63,9 +63,6 @@ class LaysViewModel @Inject constructor(
 
     private val _event = MutableLiveData(Event(id = 0L))
     private val _post = MutableLiveData(Post(id = 0L, authorId = 0L))
-//    val event: LiveData<Event>
-//        get() = _event
-
     fun setLocation(point: Point) {
         _location.value = point
     }
@@ -80,14 +77,6 @@ class LaysViewModel @Inject constructor(
     }
 
     fun setStatusLoadingFile(statusLoading: Boolean) {
-//        val status = _newStatusViewsModel.value
-//        if (statusLoading) {
-//            _newStatusViewsModel.value =
-//                status?.copy(statusLoadingFile = statusLoading, statusViewLoading = false)
-//        } else {
-//            _newStatusViewsModel.value =
-//                status?.copy(statusLoadingFile = statusLoading)
-//        }
         val status = _newStatusViewsModel.value
         _newStatusViewsModel.value =
             status?.copy(statusLoadingFile = statusLoading)
