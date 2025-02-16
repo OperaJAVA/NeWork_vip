@@ -69,7 +69,7 @@ class ScreenEvents : Fragment() {
             }
 
             override fun onShare(event: Event) {
-                val txtShare = (event.attachment?.url?: event.content).toString()
+                val txtShare = (event.attachment?.url ?: event.content).toString()
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, txtShare)
@@ -90,7 +90,7 @@ class ScreenEvents : Fragment() {
             }
 
             override fun onRemove(event: Event) {
-                if (event.authorId == myID){
+                if (event.authorId == myID) {
                     viewModelEvent.removeEvent(event)
                 }
 
@@ -120,9 +120,6 @@ class ScreenEvents : Fragment() {
 
         binding?.listEvents?.adapter = adapterEvents
 
-//        viewModelEvent.events.observe(viewLifecycleOwner) { list ->
-//            adapterEvents.submitList(list)
-//        }
 
         fun reload() {
             Snackbar.make(binding?.root!!, R.string.error_loading, Snackbar.LENGTH_LONG)
@@ -164,17 +161,10 @@ class ScreenEvents : Fragment() {
                 userAuth = false
                 myID = null
                 showBar("Ошибка авторизации, выполните вход")
-//                viewModelEvent.loadEvents()
             }
-
-//            if(!state.statusAuth){
-//                showBar("Выход из аккаунта!") выполнен вход
-//            }
-
         }
 
         binding?.swipeRefreshLayout?.setOnRefreshListener {
-//            viewModelEvent.loadEvents()
             adapterEvents.refresh()
         }
         binding?.swipeRefreshLayout?.setColorSchemeResources(
@@ -232,10 +222,4 @@ class ScreenEvents : Fragment() {
         binding?.bottomNavigationEvents?.selectedItemId = R.id.menu_events
         super.onResume()
     }
-
-//    override fun onStart() {
-////        viewModelEvent.loadEvents()
-//        super.onStart()
-//    }
-
 }

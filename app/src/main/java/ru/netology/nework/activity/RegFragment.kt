@@ -43,7 +43,6 @@ class RegFragment : Fragment() {
                 Snackbar.LENGTH_LONG
             ).show()
         }
-//println("viewModel.authState ${viewModel.authState.value}")
         with(binding) {
             btnSignIn.setOnClickListener {
                 if (fieldLogin.editText?.text?.isEmpty() == true
@@ -112,9 +111,6 @@ class RegFragment : Fragment() {
                 .createIntent(launcher::launch)
 
         }
-//        binding.removePhoto.setOnClickListener {
-//            viewModel.clearPhoto()
-//        }
         return binding.root
     }
 

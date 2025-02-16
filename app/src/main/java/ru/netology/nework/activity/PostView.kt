@@ -96,7 +96,6 @@ class PostView : Fragment() {
                 }
 
                 override fun showUsers(users: List<Long>?) {
-                    //val list = viewModelUsers.selectUsers(listOf(65, 66, 67, 68, 69, 70))
                     val list = users?.let { viewModelUsers.selectUsers(it) }
                     findNavController().navigate(
                         R.id.tmpFrag,
@@ -133,8 +132,6 @@ class PostView : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                 when (menuItem.itemId) {
                     R.id.share -> {
-//                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://94.228.125.136:8080/swagger-ui/index.html#/Posts/getAll_3"))
-//                        startActivity(intent)
 
                         val intent = Intent().apply {
                             action = Intent.ACTION_SEND
@@ -194,9 +191,5 @@ class PostView : Fragment() {
         yakit.stopMapView()
         super.onStop()
     }
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-//    }
 }
 

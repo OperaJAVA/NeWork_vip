@@ -46,7 +46,6 @@ class ScreenPosts : Fragment() {
     ): View {
 
         binding = ScreenPostsBinding.inflate(inflater, container, false)
-//        val binding = ScreenPostsBinding.inflate(inflater, container, false)
         binding?.bottomNavigation?.selectedItemId = R.id.screenPosts
 
         fun showBar(txt: String) {
@@ -68,8 +67,6 @@ class ScreenPosts : Fragment() {
                     )
                         .show(childFragmentManager, "TAG")
 
-//                    DialogAddJob.newInstance("SELECT_DATE", "12321321")
-//                        .show(childFragmentManager, "TAG")
                 }
             }
 
@@ -98,7 +95,6 @@ class ScreenPosts : Fragment() {
             override fun onRemove(post: Post) {
                 if (post.authorId == myID)
                     viewModel.removePost(post)
-                //viewModel.loadPosts()
             }
 
             override fun openCardPost(post: Post) {
@@ -121,7 +117,6 @@ class ScreenPosts : Fragment() {
 
         binding?.list?.adapter = adapter
 
-//binding?.list?.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->  }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -149,31 +144,17 @@ class ScreenPosts : Fragment() {
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding?.progress?.isVisible = state.loading
             binding?.swipeRefreshLayout?.isRefreshing = state.refreshing
-//            if (state.errorNetWork) {
-////                Snackbar.make(binding?.root!!, R.string.error_loading, Snackbar.LENGTH_LONG)
-////                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
-////                    .show()
-////                reload()
-//            }
-
             if (state.error403) {
                 userAuth = false
                 myID = null
                 showBar("Ошибка авторизации, выполните вход")
-//                viewModel.loadPosts()
             }
             if (state.error415) {
                 showBar("Неправильный формат файла!")
             }
-
-//            if(!state.statusAuth){
-//                showBar("Выход из аккаунта!") выполнен вход
-//            }
-
         }
 
         binding?.swipeRefreshLayout?.setOnRefreshListener {
-//            viewModel.loadPosts()
             adapter.refresh()
         }
         binding?.swipeRefreshLayout?.setColorSchemeResources(
@@ -185,13 +166,10 @@ class ScreenPosts : Fragment() {
         binding?.bottomNavigation?.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menu_posts -> {
-//                    viewModel.loadPosts()
-//                    adapter.refresh()
                     true
                 }
 
                 R.id.menu_events -> {
-//                    println("click EVENTS")
                     findNavController().navigate(
                         R.id.screenEvents,
                     )
@@ -231,10 +209,6 @@ class ScreenPosts : Fragment() {
         return binding?.root!!
     }
 
-//    override fun onStart() {
-////        viewModel.loadPosts()
-//        super.onStart()
-//    }
 
     override fun onResume() {
         binding?.bottomNavigation?.selectedItemId = R.id.menu_posts
