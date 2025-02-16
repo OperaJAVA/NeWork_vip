@@ -119,8 +119,8 @@ class EventView : Fragment() {
 
         viewModelUsers.listUsers.observe(viewLifecycleOwner) {}
 
-        viewModelMedia.duration.observe(viewLifecycleOwner){
-            if(it != "STOP") binding?.duration!!.text = it
+        viewModelMedia.duration.observe(viewLifecycleOwner) {
+            if (it != "STOP") binding?.duration!!.text = it
             else binding?.playAudio?.isChecked = false
         }
 
@@ -188,9 +188,4 @@ class EventView : Fragment() {
         yakit.stopMapView()
         super.onStop()
     }
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-//    }
-
 }

@@ -96,7 +96,6 @@ class NewEvent : Fragment() {
     ): View {
         var lastStateLoading = false
         event = arguments?.eventArg
-//        println("GET EVENT $event")
 
         val binding = NewEventBinding.inflate(layoutInflater)
         yakit.initMapView(binding.map)
@@ -199,7 +198,6 @@ class NewEvent : Fragment() {
                                     viewModelLays.typeAttach.value
                                 )
                             }
-//                            println("EVENT for send $event")
                         }
                         true
                     }
@@ -303,14 +301,9 @@ class NewEvent : Fragment() {
 
         viewModelLays.newStatusViewsModel.observe(viewLifecycleOwner) { status ->
             showViews(status)
-//            println("status $status, type ${viewModelLays.typeAttach.value}")
         }
 
         viewModelLays.photo.observe(viewLifecycleOwner) {
-//            if (it == viewModelLays.noPhoto) {
-//                binding.content.focusAndShowKeyboard()
-//                return@observe
-//            }
 
             binding.content.clearFocus()
             if (it.file == null) {
@@ -367,13 +360,11 @@ class NewEvent : Fragment() {
                 viewModelLays.setDataTime(DateEvent(getTime(), null, MeetingType.ONLINE))
             }
             binding.currentDateTime.text = viewModelLays.dateEvent.value?.date
-//            println("currentDateTime ${viewModelLays.dateEvent.value}")
         }
 
         binding.bottomNavigationNewEvent.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.add_pic -> {
-                    //multiPartBody = null
                     if (viewModelLays.newStatusViewsModel.value?.statusLoadingImg == false) {
                         viewModelLays.setTypeAttach(AttachmentType.IMAGE)
                         ImagePicker.with(this)
@@ -386,20 +377,6 @@ class NewEvent : Fragment() {
                     true
                 }
 
-//                R.id.photo -> {
-//                    if (viewModelLays.newStatusViewsModel.value?.statusLoadingImg == false) {
-//                        //multiPartBody = null
-//                        viewModelLays.setTypeAttach(AttachmentType.IMAGE)
-//                        ImagePicker.with(this)
-//                            .cameraOnly()
-//                            .crop()
-//                            .maxResultSize(2048, 2048)
-//                            .createIntent(launcher::launch)
-//                    } else viewModelLays.setImageGroup()
-//
-//                    true
-//                }
-
                 R.id.add_geo -> {
                     viewModelLays.setViewMaps()
                     true
@@ -411,15 +388,11 @@ class NewEvent : Fragment() {
                 }
 
                 R.id.add_file -> {
-//                    val uri = Uri.parse("")
-//                    getFileName(uri, requireContext())
                     viewModelLays.setLoadingGroup()
                     true
                 }
 
                 R.id.add_date -> {
-//                    binding.viewDate.visibility = SHOW
-//                    binding.currentDateTime.text = getTime()
                     viewModelLays.setViewDateEvent()
                     true
                 }
@@ -528,7 +501,7 @@ class NewEvent : Fragment() {
 
     private fun getIntent() = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         addCategory(Intent.CATEGORY_OPENABLE)
-        type = "*/*" // That's needed for some reason, crashes otherwise
+        type = "*/*"
         putExtra(
             Intent.EXTRA_MIME_TYPES, arrayOf(
                 "audio/mpeg",
