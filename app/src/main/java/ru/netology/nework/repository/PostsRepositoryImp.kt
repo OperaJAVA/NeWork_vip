@@ -118,8 +118,6 @@ class PostsRepositoryImp @Inject constructor(
                 _posts.toEntity()
             )
 
-            //           _userWall.value = response.body() ?: throw ApiError(response.code(), response.message())
-        } catch (e: IOException) {
             throw NetworkError
         } catch (e: ApiError403) {
             throw ApiError403("403")

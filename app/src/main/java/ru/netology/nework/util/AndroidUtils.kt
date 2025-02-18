@@ -19,8 +19,6 @@ import kotlin.reflect.KProperty
 object AndroidUtils {
 
     fun getTimePublish(str: String?): String {
-        //"2023-10-17T13:01:59.846Z"
-        //"2024-04-25T15:00:33.874Z"
         str?.let{
             try {
                 val yyyy = it.subSequence(0, 4)
@@ -94,8 +92,6 @@ object AndroidUtils {
     @SuppressLint("SimpleDateFormat")
     fun getTimeFormat(date: Calendar): String =
         SimpleDateFormat("yyyy-MM-dd HH:mm").format(date.time).toString()
-    //"2024-04-25T15:00:33.874Z"
-
 }
 
 object StringArg : ReadWriteProperty<Bundle, String?> {
