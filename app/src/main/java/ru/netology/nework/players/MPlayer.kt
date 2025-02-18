@@ -1,7 +1,6 @@
 package ru.netology.nework.players
 
 import android.media.MediaPlayer
-//import ru.netology.mediaplayer.activity.URL_LOAD_SONG
 import java.io.IOException
 
 class MPlayer {
