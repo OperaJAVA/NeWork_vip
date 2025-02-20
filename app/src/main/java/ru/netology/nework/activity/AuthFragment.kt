@@ -17,104 +17,82 @@ import ru.netology.nework.error.UnknownError
 import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.viewmodel.AuthViewModel
 
-@Suppress("UNUSED_PARAMETER")
 @AndroidEntryPoint
 class AuthFragment : Fragment() {
 
     private val viewModel: AuthViewModel by viewModels()
     private var pressBtn = false
-    private var curFrag: CurrentShowFragment? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = AuthFragmentBinding.inflate(inflater, container, false)
+        val binding = AuthFragmentBinding.inflate(layoutInflater)
 
-        // Инициализация UI
-        initializeUI(binding)
-
-        // Наблюдение за состоянием аутентификации
-        observeAuthState(binding)
-        observeDataState(binding)
-
-        return binding.root
-    }
-
-    private fun initializeUI(binding: AuthFragmentBinding) {
-        // Заполнение полей входа, если есть предыдущее состояние
-        viewModel.authState.value?.let { authState ->
-            binding.fieldLogin.editText?.setText(authState.login)
-            binding.fieldPass.editText?.setText(authState.pass)
+        fun showBar(txt: String) {
+            Snackbar.make(
+                binding.root,
+                txt,
+                Snackbar.LENGTH_LONG
+            ).show()
         }
 
-        binding.btnSignIn.setOnClickListener {
-            handleSignIn(binding)
+        with(binding) {
+            viewModel.authState.value?.let {
+                fieldLogin.editText?.setText(it.login)
+                fieldPass.editText?.setText(it.pass)
+            }
+            btnSignIn.setOnClickListener {
+                if (
+                    fieldLogin.editText?.text?.isEmpty() == true ||
+                    fieldPass.editText?.text?.isEmpty() == true
+                ) {
+                    showBar("Все поля должны быть заполнены!")
+                } else {
+                    pressBtn = true
+                    val login = fieldLogin.editText?.text.toString()
+                    val pass = fieldPass.editText?.text.toString()
+                    viewModel.getAuthFromServer(login, pass)
+                }
+            }
         }
-    }
 
-    private fun handleSignIn(binding: AuthFragmentBinding) {
-        val login = binding.fieldLogin.editText?.text.toString()
-        val pass = binding.fieldPass.editText?.text.toString()
-
-        if (login.isBlank() || pass.isBlank()) {
-            showSnackbar("Все поля должны быть заполнены!")
-        } else {
-            pressBtn = true
-            viewModel.getAuthFromServer(login, pass)
-        }
-    }
-
-    private fun observeAuthState(binding: AuthFragmentBinding) {
         viewModel.authState.observe(viewLifecycleOwner) { auth ->
             if (pressBtn) {
                 if (auth.login != null && auth.pass != null) {
                     findNavController().popBackStack()
                 } else {
                     AuthViewModel.userAuth = false
-                    showSnackbar("Такого пользователя нет!")
+                    showBar("Такого пользователя нет!")
                 }
             }
         }
-    }
 
-    private fun observeDataState(binding: AuthFragmentBinding) {
-        viewModel.dataState.observe(viewLifecycleOwner) { dataState ->
-            // Показать индикатор загрузки
-            binding.statusAuth.isVisible = dataState is FeedModelState.Loading
-
-            when (dataState) {
-                is FeedModelState.Loading -> {
-                    // Логика для состояния загрузки
-                }
-                is FeedModelState.Error -> {
-                    // Логика для обработки ошибки
-                }
-                is FeedModelState.BadRequest -> {
-                    // Логика для обработки ошибки 400
-                }
-                is FeedModelState.Unauthorized -> {
-                    // Логика для обработки ошибки авторизации
-                }
-                is FeedModelState.NotFound -> {
-                    // Логика для обработки ошибки 404
-                }
-                // Добавьте другие состояния по необходимости
-                else -> {
-                    // Логика по умолчанию
-                }
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+            if (AuthViewModel.userAuth) {
+                showBar("Выполнен вход в аккаунт")
+                findNavController().navigateUp()
+            }
+            if (state is FeedModelState.State) {
+                if (state.error400) showBar("Неправильный пароль!")
+                if (state.error404) showBar("Пользователь не зарегистрирован!")
+                if (state.error) showBar("Проверьте ваше подключение к сети!")
+                binding.statusAuth.isVisible = state.loading
             }
         }
+        return binding.root
     }
 
-    private fun showSnackbar(message: String) {
-        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
-    }
+    private var curFrag: CurrentShowFragment? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        curFrag = context as? CurrentShowFragment ?: throw UnknownError
+        try {
+            curFrag = context as CurrentShowFragment
+        } catch (e: ClassCastException) {
+            throw UnknownError
+        }
     }
 
     override fun onDetach() {
