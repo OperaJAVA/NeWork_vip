@@ -85,4 +85,8 @@
     <string name="content">Content</string>
     <string name="cur_time">Now</string>
     <string name="format_date">__.__.____</string>
+
+    <string name="logout_confirmation">Выйти из аккаунта?</string>
+    <string name="logout_message">Вы вышли из аккаунта.</string>
+
 </resources>
