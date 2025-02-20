@@ -13,14 +13,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
-import ru.netology.nework.viewmodel.AuthViewModel
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
 import ru.netology.nework.databinding.RegFragmentBinding
 import ru.netology.nework.error.UnknownError
 import ru.netology.nework.media.MediaUpload
+import ru.netology.nework.model.FeedModelState
+import ru.netology.nework.viewmodel.AuthViewModel
 
 @AndroidEntryPoint
 class RegFragment : Fragment() {
@@ -28,72 +29,46 @@ class RegFragment : Fragment() {
     private val viewModel: AuthViewModel by viewModels()
     private var pressBtn = false
     private var upload: MediaUpload? = null
+    private var curFrag: CurrentShowFragment? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = RegFragmentBinding.inflate(layoutInflater)
+        val binding = RegFragmentBinding.inflate(inflater, container, false)
 
-        fun showBar(txt: String) {
-            Snackbar.make(
-                binding.root,
-                txt,
-                Snackbar.LENGTH_LONG
-            ).show()
-        }
-        with(binding) {
-            btnSignIn.setOnClickListener {
-                if (fieldLogin.editText?.text?.isEmpty() == true
-                    || fieldPass.editText?.text?.isEmpty() == true
-                    || fieldConfirm.editText?.text?.isEmpty() == true
-                    || fieldName.editText?.text?.isEmpty() == true
-                ) showBar("Все поля должны быть заполнены!")
-                else {
-                    if (fieldConfirm.editText?.text?.contentEquals(fieldPass.editText?.text) == false) {
-                        showBar("Поля 'confirm' и 'password' содержат разные значения!")
-                    } else {
-                        if (upload != null) {
-                            val login = fieldLogin.editText?.text?.toString()!!
-                            val pass = fieldPass.editText?.text?.toString()!!
-                            val name = fieldName.editText?.text?.toString()!!
-                            viewModel.getRegFromServer(login, pass, name, upload!!)
-                            pressBtn = true
-                        } else showBar("Необходимо загрузить фото для профиля!")
-
-                    }
-                }
-            }
+        binding.btnSignIn.setOnClickListener {
+            validateAndRegister(binding)
         }
 
-
-        viewModel.authState.observe(viewLifecycleOwner) { _ ->
+        viewModel.authState.observe(viewLifecycleOwner) {
             if (pressBtn) {
                 findNavController().popBackStack()
             }
-            viewModel.dataState.observe(viewLifecycleOwner) {
-                if (it.error403) showBar("Пользователь с таким именем уже зарегистрирован!")
-                if (it.error415) showBar("Неправильный формат фото!")
-                if (it.error) showBar("Проверьте ваше подключение к сети!")
-                binding.statusReg.isVisible = it.loading
-            }
+            observeDataState(binding)
         }
 
-        val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            when (it.resultCode) {
-                ImagePicker.RESULT_ERROR -> showBar(ImagePicker.getError(it.data))
+        registerImagePicker(binding) // Теперь это будет работать
 
-                Activity.RESULT_OK -> {
-                    val uri: Uri? = it.data?.data
-                    upload = MediaUpload(uri?.toFile())
-                }
+        return binding.root
+    }
 
-                Activity.RESULT_CANCELED -> {
-                    upload = null
+    private fun registerImagePicker(binding: RegFragmentBinding) { // Функция вынесена на уровень класса
+        val launcher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                when (result.resultCode) {
+                    ImagePicker.RESULT_ERROR -> showBar(ImagePicker.getError(result.data))
+                    Activity.RESULT_OK -> {
+                        val uri: Uri? = result.data?.data
+                        upload = MediaUpload(uri?.toFile())
+                    }
+
+                    Activity.RESULT_CANCELED -> {
+                        upload = null
+                    }
                 }
             }
-        }
 
         binding.pickPhoto.setOnClickListener {
             ImagePicker.with(this)
@@ -109,12 +84,63 @@ class RegFragment : Fragment() {
                 .crop()
                 .maxResultSize(2048, 2048)
                 .createIntent(launcher::launch)
-
         }
-        return binding.root
     }
 
-    private var curFrag: CurrentShowFragment? = null
+    private fun showBar(message: String) {
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun validateAndRegister(binding: RegFragmentBinding) {
+        if (binding.fieldLogin.editText?.text.isNullOrEmpty() ||
+            binding.fieldPass.editText?.text.isNullOrEmpty() ||
+            binding.fieldConfirm.editText?.text.isNullOrEmpty() ||
+            binding.fieldName.editText?.text.isNullOrEmpty()
+        ) {
+            showBar("Все поля должны быть заполнены!")
+            return
+        }
+
+        if (binding.fieldConfirm.editText?.text.toString() != binding.fieldPass.editText?.text.toString()) {
+            showBar("Поля 'confirm' и 'password' содержат разные значения!")
+            return
+        }
+
+        upload?.let {
+            val login = binding.fieldLogin.editText?.text.toString()
+            val pass = binding.fieldPass.editText?.text.toString()
+            val name = binding.fieldName.editText?.text.toString()
+            viewModel.getRegFromServer(login, pass, name, it)
+            pressBtn = true
+        } ?: run {
+            showBar("Необходимо загрузить фото для профиля!")
+        }
+    }
+
+    private fun observeDataState(binding: RegFragmentBinding) {
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is FeedModelState.Loading -> {
+                    binding.statusReg.isVisible = true
+                }
+
+                is FeedModelState.Error -> {
+                    showBar("Произошла ошибка! Проверьте подключение к сети.")
+                    binding.statusReg.isVisible = false
+                }
+
+                is FeedModelState.Success<*> -> {
+                    // Для успешного состояния
+                    binding.statusReg.isVisible = false
+                    // Можете добавить обработку успешной аутентификации здесь
+                }
+
+                else -> {
+                }
+            }
+        }
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
@@ -133,6 +159,5 @@ class RegFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         curFrag?.getCurFragmentAttach(getString(R.string.sign_up))
-
     }
 }

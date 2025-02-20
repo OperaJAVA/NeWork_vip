@@ -35,43 +35,41 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @AndroidEntryPoint
 class EventView : Fragment() {
+
     @Inject
     lateinit var yakit: YaKit
-    var binding: EventViewBinding? = null
+    private var binding: EventViewBinding? = null
 
     private val viewModelEvents: EventsViewModel by viewModels()
     private val viewModelUsers: UsersViewModel by viewModels()
     private val viewModelMedia: MediaViewModel by viewModels()
+
+    private var curFrag: CurrentShowFragment? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = EventViewBinding.inflate(layoutInflater)
-        var txtShare = ""
+        binding = EventViewBinding.inflate(inflater, container, false)
+
+        setupEventAdapter()
+        observeViewModels()
+        setupMenu()
+
+        return binding?.root
+    }
+
+    private fun setupEventAdapter() {
         val idEvent = arguments?.idArg
         val adapterEventView = context?.let {
             AdapterEventView(binding!!, yakit, object : OnEventListener {
                 override fun onLike(event: Event) {
-                    if (AuthViewModel.userAuth) {
-                        viewModelEvents.likeEvent(event, !event.likedByMe!!)
-                    } else {
-                        DialogAuth.newInstance(
-                            AuthViewModel.DIALOG_IN,
-                            "Для установки лайков нужно авторизоваться"
-                        )
-                            .show(childFragmentManager, "TAG")
-                    }
+                    handleLikeEvent(event)
                 }
 
                 override fun openSpacePhoto(event: Event) {
-                    findNavController().navigate(
-                        R.id.spacePhoto,
-                        Bundle().apply {
-                            uriArg = event.attachment?.url
-                        }
-                    )
+                    navigateToSpacePhoto(event)
                 }
 
                 override fun playVideo(url: String) {
@@ -79,51 +77,86 @@ class EventView : Fragment() {
                 }
 
                 override fun playAudio(url: String) {
-                    if (binding?.playAudio!!.isChecked) {
-                        viewModelMedia.playAudio(url)
-                    } else {
-                        viewModelMedia.pauseAudio()
-                    }
+                    toggleAudioPlayback(url)
                 }
 
                 override fun showUsers(users: List<Long>?) {
-                    val list = users?.let { it -> viewModelUsers.selectUsers(it) }
-                    findNavController().navigate(
-                        R.id.tmpFrag,
-                        Bundle().apply {
-                            listUserArg = list
-                        }
-                    )
+                    navigateToUserList(users)
                 }
 
                 override fun participateEvan(event: Event) {
-                    if (AuthViewModel.userAuth) {
-                        viewModelEvents.participateEvent(event, !event.participatedByMe!!)
-                    } else {
-                        DialogAuth.newInstance(
-                            AuthViewModel.DIALOG_IN,
-                            "Для добавления в список участников нужно авторизоваться"
-                        )
-                            .show(childFragmentManager, "TAG")
-                    }
+                    handleParticipationEvent(event)
                 }
             })
         }
+
         viewModelEvents.receivedEvents.observe(viewLifecycleOwner) { events ->
             val event = events.find { it.id == idEvent }
-            txtShare = (event?.attachment?.url ?: event?.content).toString()
             event?.let {
-                adapterEventView?.bind(event)
+                adapterEventView?.bind(it)
             }
         }
+    }
 
-        viewModelUsers.listUsers.observe(viewLifecycleOwner) {}
-
-        viewModelMedia.duration.observe(viewLifecycleOwner) {
-            if (it != "STOP") binding?.duration!!.text = it
-            else binding?.playAudio?.isChecked = false
+    private fun handleLikeEvent(event: Event) {
+        if (AuthViewModel.userAuth) {
+            viewModelEvents.likeEvent(event, !(event.likedByMe ?: false))
+        } else {
+            showAuthDialog("Для установки лайков нужно авторизоваться")
         }
+    }
 
+    private fun navigateToSpacePhoto(event: Event) {
+        findNavController().navigate(
+            R.id.spacePhoto,
+            Bundle().apply {
+                uriArg = event.attachment?.url
+            }
+        )
+    }
+
+    private fun toggleAudioPlayback(url: String) {
+        if (binding?.playAudio?.isChecked == true) {
+            viewModelMedia.playAudio(url)
+        } else {
+            viewModelMedia.pauseAudio()
+        }
+    }
+
+    private fun navigateToUserList(users: List<Long>?) {
+        val list = users?.let { viewModelUsers.selectUsers(it) }
+        findNavController().navigate(
+            R.id.tmpFrag,
+            Bundle().apply {
+                listUserArg = list
+            }
+        )
+    }
+
+    private fun handleParticipationEvent(event: Event) {
+        if (AuthViewModel.userAuth) {
+            viewModelEvents.participateEvent(event, !(event.participatedByMe ?: false))
+        } else {
+            showAuthDialog("Для добавления в список участников нужно авторизоваться")
+        }
+    }
+
+    private fun showAuthDialog(message: String) {
+        DialogAuth.newInstance(AuthViewModel.DIALOG_IN, message)
+            .show(childFragmentManager, "TAG")
+    }
+
+    private fun observeViewModels() {
+        viewModelMedia.duration.observe(viewLifecycleOwner) {
+            if (it != "STOP") {
+                binding?.duration?.text = it
+            } else {
+                binding?.playAudio?.isChecked = false
+            }
+        }
+    }
+
+    private fun setupMenu() {
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_share, menu)
@@ -132,44 +165,40 @@ class EventView : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                 when (menuItem.itemId) {
                     R.id.share -> {
-                        val intent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, txtShare)
-                            type = "text/plain"
-                        }
-                        val shareIntent =
-                            Intent.createChooser(intent, "Share Post")
-                        startActivity(shareIntent)
+                        shareEvent()
                         true
                     }
-
                     android.R.id.home -> {
-                        println("home")
                         viewModelMedia.stopAudio()
                         findNavController().navigateUp()
                         true
                     }
-
                     else -> false
                 }
-
         }, viewLifecycleOwner)
+    }
 
-        return binding?.root
+    private fun shareEvent() {
+        val idEvent = arguments?.idArg
+        val event = viewModelEvents.receivedEvents.value?.find { it.id == idEvent }
+        val txtShare = (event?.attachment?.url ?: event?.content).toString()
+
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, txtShare)
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(intent, "Share Post")
+        startActivity(shareIntent)
     }
 
     fun stopMedia() {
         viewModelMedia.stopAudio()
     }
 
-    private var curFrag: CurrentShowFragment? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        try {
-            curFrag = context as CurrentShowFragment
-        } catch (e: ClassCastException) {
-            throw UnknownError
-        }
+        curFrag = context as? CurrentShowFragment ?: throw UnknownError
     }
 
     override fun onDetach() {
@@ -181,10 +210,10 @@ class EventView : Fragment() {
     override fun onStart() {
         super.onStart()
         curFrag?.getCurFragmentAttach(getString(R.string.event))
-
     }
 
     override fun onStop() {
+        stopMedia() // Здесь вызываем метод
         yakit.stopMapView()
         super.onStop()
     }

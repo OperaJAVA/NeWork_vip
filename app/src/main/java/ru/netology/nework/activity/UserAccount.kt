@@ -29,6 +29,7 @@ import ru.netology.nework.dialog.DialogSelectRemoveJob
 import ru.netology.nework.dto.Job
 import ru.netology.nework.dto.Post
 import ru.netology.nework.error.UnknownError
+import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.myID
 import ru.netology.nework.viewmodel.PostsViewModel
@@ -39,7 +40,6 @@ const val SELECT_DATE = 1
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @AndroidEntryPoint
-
 class UserAccount : Fragment() {
 
     private val viewModelUser: UsersViewModel by viewModels()
@@ -52,18 +52,13 @@ class UserAccount : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        val binding = UserAccountBinding.inflate(layoutInflater)
+        val binding = UserAccountBinding.inflate(inflater)
         val idUser = arguments?.userArg?.id!!
         nameLoginUser =
             "${arguments?.userArg?.name.toString()} / ${arguments?.userArg?.login.toString()}"
 
         fun showBar(txt: String) {
-            Snackbar.make(
-                binding.root,
-                txt,
-                Snackbar.LENGTH_LONG
-            ).show()
+            Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
         }
 
         lifecycleScope.launch {
@@ -78,9 +73,7 @@ class UserAccount : Fragment() {
                     DialogSelectRemoveJob.newInstance(REMOVE_JOB, it)
                         .show(childFragmentManager, "TAG")
                 }
-
             }
-
         })
 
         binding.listJobs.adapter = adapterJobs
@@ -93,8 +86,7 @@ class UserAccount : Fragment() {
                     DialogAuth.newInstance(
                         AuthViewModel.DIALOG_IN,
                         "Для установки лайков нужно авторизоваться"
-                    )
-                        .show(childFragmentManager, "TAG")
+                    ).show(childFragmentManager, "TAG")
                 }
             }
 
@@ -104,17 +96,14 @@ class UserAccount : Fragment() {
                     putExtra(Intent.EXTRA_TEXT, post.content)
                     type = "text/plain"
                 }
-                val shareIntent =
-                    Intent.createChooser(intent, "Share Post")
+                val shareIntent = Intent.createChooser(intent, "Share Post")
                 startActivity(shareIntent)
             }
 
             override fun onEdit(post: Post) {
                 findNavController().navigate(
                     R.id.newPostFrag,
-                    Bundle().apply {
-                        postArg = post
-                    }
+                    Bundle().apply { postArg = post }
                 )
             }
 
@@ -125,24 +114,16 @@ class UserAccount : Fragment() {
             override fun openCardPost(post: Post) {
                 findNavController().navigate(
                     R.id.postView,
-                    Bundle().apply {
-                        postArg = post
-                    }
+                    Bundle().apply { postArg = post }
                 )
             }
-
         })
 
         binding.listPosts.adapter = adapterPosts
 
         fun showListJobs(status: Boolean) {
-            if (status) {
-                binding.listPosts.visibility = View.GONE
-                binding.listJobs.visibility = View.VISIBLE
-            } else {
-                binding.listPosts.visibility = View.VISIBLE
-                binding.listJobs.visibility = View.GONE
-            }
+            binding.listPosts.visibility = if (status) View.GONE else View.VISIBLE
+            binding.listJobs.visibility = if (status) View.VISIBLE else View.GONE
         }
 
         viewModelUser.listUsers.observe(viewLifecycleOwner) { users ->
@@ -155,8 +136,6 @@ class UserAccount : Fragment() {
                     .load(user.avatar)
                     .timeout(35_000)
                     .into(imageAvatar)
-
-
             }
         }
 
@@ -164,18 +143,16 @@ class UserAccount : Fragment() {
             if (it.statusShowListJobs) {
                 showListJobs(true)
                 if (myID == idUser) {
-                    binding.fab.visibility = SHOW
+                    binding.fab.visibility = View.VISIBLE
                 }
             } else {
-                binding.fab.visibility = HIDE
+                binding.fab.visibility = View.GONE
                 showListJobs(false)
             }
         }
 
         viewModelUser.userJobs.observe(viewLifecycleOwner) { jobs ->
-            adapterJobs.submitList(
-                jobs.filter { it.idUser == idUser }
-            )
+            adapterJobs.submitList(jobs.filter { it.idUser == idUser })
         }
 
         viewModelPosts.userWall.observe(viewLifecycleOwner) { posts ->
@@ -188,15 +165,44 @@ class UserAccount : Fragment() {
             viewModelPosts.takePosts(posts.filter { it.authorId == idUser })
         }
 
-
         viewModelUser.dataState.observe(viewLifecycleOwner) { state ->
-            binding.progress.isVisible = state.loading
-            if (state.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.retry_loading) { viewModelUser.getUserJobs(idUser) }
-                    .show()
-            } else if (state.error404) {
-                showBar("Пользователь не найден!")
+            binding.progress.isVisible = state is FeedModelState.Loading
+            when (state) {
+                is FeedModelState.Loading -> {
+                    // Состояние загрузки
+                }
+                is FeedModelState.Error -> {
+                    Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.retry_loading) { viewModelUser.getUserJobs(idUser) }
+                        .show()
+                }
+                is FeedModelState.NotFound -> {
+                    showBar("Пользователь не найден!")
+                }
+                is FeedModelState.Unauthorized -> {
+                    showBar("Ошибка авторизации!")
+                }
+                is FeedModelState.BadRequest -> {
+                    showBar("Неверный запрос!")
+                }
+                is FeedModelState.NetworkError -> {
+                    showBar("Ошибка сети!")
+                }
+                is FeedModelState.Refreshing -> {
+                    // Состояние обновления
+                }
+                is FeedModelState.Success<*> -> {
+                    // Успешное состояние, можно обработать данные, если необходимо
+                }
+                is FeedModelState.AuthStatus -> {
+                    // Обработка статуса аутентификации
+                }
+                is FeedModelState.State -> {
+                    // Обработка состояния
+                }
+                FeedModelState.UnsupportedMediaType -> {
+                    showBar("Неподдерживаемый тип медиа!")
+                }
             }
         }
 
@@ -207,29 +213,25 @@ class UserAccount : Fragment() {
                     showListJobs(true)
                     true
                 }
-
                 R.id.wall -> {
                     viewModelUser.setStatusShowListJobs(false)
                     showListJobs(false)
                     adapterPosts.submitList(viewModelPosts.userWall.value)
                     true
                 }
-
                 else -> false
             }
         }
 
-
         binding.fab.setOnClickListener {
-            findNavController().navigate(
-                R.id.newJob
-            )
+            findNavController().navigate(R.id.newJob)
         }
 
         return binding.root
     }
 
     private var curFrag: CurrentShowFragment? = null
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
@@ -248,7 +250,6 @@ class UserAccount : Fragment() {
     override fun onStart() {
         super.onStart()
         curFrag?.getCurFragmentAttach(nameLoginUser)
-
     }
 
     fun getIdJob(id: Long) {

@@ -18,7 +18,6 @@ import ru.netology.nework.model.StatusModelShowUserAcc
 import ru.netology.nework.repository.UsersRepository
 import javax.inject.Inject
 
-
 @HiltViewModel
 @ExperimentalCoroutinesApi
 class UsersViewModel @Inject constructor(
@@ -39,118 +38,119 @@ class UsersViewModel @Inject constructor(
     val userAccount: LiveData<UserResponse>
         get() = _userAccount
 
-
     val userJobs: LiveData<List<Job>> = usersRepo.allUsersJob.asLiveData(Dispatchers.Default)
-
 
     init {
         loadUsers()
     }
 
     fun loadUsers() {
-        _dataState.value = FeedModelState(loading = true)
+        _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
         viewModelScope.launch {
             try {
                 usersRepo.getUsers()
-                _dataState.value = FeedModelState()
+                _dataState.value = FeedModelState.Success(true) // Успешное состояние
             } catch (e: Exception) {
-                if (e.javaClass.name == "ru.netology.nework.error.ApiError403") {
-                    _dataState.value = FeedModelState(error403 = true)
-                } else _dataState.value = FeedModelState(error = true)
+                when (e) {
+                    is ru.netology.nework.error.ApiError403 -> {
+                        _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
+                    }
+                    else -> {
+                        _dataState.value = FeedModelState.Error // Общая ошибка
+                    }
+                }
             }
         }
     }
 
     fun getUserJobs(id: Long) {
-        _dataState.value = FeedModelState(loading = true)
+        _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
         viewModelScope.launch {
             try {
                 usersRepo.getJobs(id)
-                _dataState.value = FeedModelState()
+                _dataState.value = FeedModelState.Success(true) // Успешное состояние
             } catch (e: Exception) {
-                if (e.javaClass.name == "ru.netology.nework.error.ApiError403") {
-                    _dataState.value = FeedModelState(error403 = true)
-                } else _dataState.value = FeedModelState(error = true)
+                when (e) {
+                    is ru.netology.nework.error.ApiError403 -> {
+                        _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
+                    }
+                    else -> {
+                        _dataState.value = FeedModelState.Error // Общая ошибка
+                    }
+                }
             }
         }
     }
 
     fun getUser(id: Long) {
-        _dataState.value = FeedModelState(loading = true)
+        _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
         viewModelScope.launch {
             try {
                 usersRepo.getUser(id)
-                _dataState.value = FeedModelState()
+                _dataState.value = FeedModelState.Success(true) // Успешное состояние
             } catch (e: Exception) {
-
-                if (e.javaClass.name == "ru.netology.nework.error.ApiError404") {
-                    _dataState.value = FeedModelState(error404 = true)
-//                    println(e.javaClass.name)
-                } else _dataState.value = FeedModelState(error = true)
+                when (e) {
+                    is ru.netology.nework.error.ApiError404 -> {
+                        _dataState.value = FeedModelState.NotFound // Не найдено
+                    }
+                    else -> {
+                        _dataState.value = FeedModelState.Error // Общая ошибка
+                    }
+                }
             }
-
         }
     }
 
     fun saveJob(job: Job) {
-        _dataState.value = FeedModelState(loadingJob = true)
+        _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
         viewModelScope.launch {
             try {
                 usersRepo.saveJob(job)
-                _dataState.value = FeedModelState()
+                _dataState.value = FeedModelState.Success(true) // Успешное состояние
             } catch (e: Exception) {
-                when (e.javaClass.name) {
-                    "ru.netology.nework.error.ApiError403" -> {
-                        _dataState.value = FeedModelState(error403 = true)
+                when (e) {
+                    is ru.netology.nework.error.ApiError403 -> {
+                        _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
-
-                    "ru.netology.nework.error.ApiError404" -> {
-                        _dataState.value = FeedModelState(error404 = true)
+                    is ru.netology.nework.error.ApiError404 -> {
+                        _dataState.value = FeedModelState.NotFound // Не найдено
                     }
-
-                    "ru.netology.nework.error.ApiError400" -> {
-                        _dataState.value = FeedModelState(error400 = true)
+                    is ru.netology.nework.error.ApiError400 -> {
+                        _dataState.value = FeedModelState.BadRequest // Ошибка 400
                     }
-
                     else -> {
-                        _dataState.value = FeedModelState(error = true)
+                        _dataState.value = FeedModelState.Error // Общая ошибка
                     }
                 }
             }
         }
-
     }
 
     fun removeJob(id: Long) {
         val job = userJobs.value?.find { it.id == id }
-        _dataState.value = FeedModelState(loadingJob = true)
+        _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
         viewModelScope.launch {
             try {
                 job?.let { usersRepo.deleteJob(it) }
-                _dataState.value = FeedModelState()
+                _dataState.value = FeedModelState.Success(true) // Успешное состояние
             } catch (e: Exception) {
-                println(e.javaClass.name)
-                when (e.javaClass.name) {
-                    "ru.netology.nework.error.ApiError403" -> {
-                        _dataState.value = FeedModelState(error403 = true)
+                when (e) {
+                    is ru.netology.nework.error.ApiError403 -> {
+                        _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
-
-                    "ru.netology.nework.error.ApiError404" -> {
-                        _dataState.value = FeedModelState(error404 = true)
+                    is ru.netology.nework.error.ApiError404 -> {
+                        _dataState.value = FeedModelState.NotFound // Не найдено
                     }
-
-                    "ru.netology.nework.error.NetworkError" -> {
-
+                    is ru.netology.nework.error.NetworkError -> {
+                        // Обработка сетевой ошибки
                     }
-
                     else -> {
-                        _dataState.value = FeedModelState(error = true)
+                        _dataState.value = FeedModelState.Error // Общая ошибка
                     }
                 }
             }
         }
     }
-
 
     fun takeUser(user: UserResponse?) {
         user?.let {
@@ -173,7 +173,6 @@ class UsersViewModel @Inject constructor(
         users.forEach { user ->
             ListMarkedUsers.addUser(MarkedUser(id = user))
         }
-
     }
 
     fun setStatusShowListJobs(status: Boolean) {

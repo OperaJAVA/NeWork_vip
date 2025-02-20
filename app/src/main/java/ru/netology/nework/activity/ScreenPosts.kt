@@ -29,11 +29,11 @@ import ru.netology.nework.viewmodel.AuthViewModel.Companion.myID
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.userAuth
 import ru.netology.nework.viewmodel.PostsViewModel
 import androidx.paging.LoadState
+import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @AndroidEntryPoint
-
 class ScreenPosts : Fragment() {
     val viewModel: PostsViewModel by viewModels()
     private val viewModelAuth: AuthViewModel by viewModels()
@@ -66,7 +66,6 @@ class ScreenPosts : Fragment() {
                         "Для установки лайков нужно авторизоваться"
                     )
                         .show(childFragmentManager, "TAG")
-
                 }
             }
 
@@ -80,7 +79,6 @@ class ScreenPosts : Fragment() {
                 val shareIntent =
                     Intent.createChooser(intent, "Share Post")
                 startActivity(shareIntent)
-
             }
 
             override fun onEdit(post: Post) {
@@ -98,7 +96,6 @@ class ScreenPosts : Fragment() {
             }
 
             override fun openCardPost(post: Post) {
-
                 findNavController().navigate(
                     R.id.postView,
                     Bundle().apply {
@@ -106,7 +103,6 @@ class ScreenPosts : Fragment() {
                     }
                 )
             }
-
         })
 
         fun reload() {
@@ -116,7 +112,6 @@ class ScreenPosts : Fragment() {
         }
 
         binding?.list?.adapter = adapter
-
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -140,17 +135,50 @@ class ScreenPosts : Fragment() {
             adapter.refresh()
         }
 
-
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
-            binding?.progress?.isVisible = state.loading
-            binding?.swipeRefreshLayout?.isRefreshing = state.refreshing
-            if (state.error403) {
-                userAuth = false
-                myID = null
-                showBar("Ошибка авторизации, выполните вход")
-            }
-            if (state.error415) {
-                showBar("Неправильный формат файла!")
+            binding?.progress?.isVisible = state is FeedModelState.Loading // Проверка на состояние загрузки
+            binding?.swipeRefreshLayout?.isRefreshing = state is FeedModelState.Refreshing // Проверка на состояние обновления
+
+            when (state) {
+                is FeedModelState.Unauthorized -> {
+                    userAuth = false
+                    myID = null
+                    showBar("Ошибка авторизации, выполните вход")
+                }
+                is FeedModelState.UnsupportedMediaType -> {
+                    showBar("Неправильный формат файла!")
+                }
+                is FeedModelState.Error -> {
+                    showBar("Произошла ошибка!")
+                }
+                is FeedModelState.NetworkError -> {
+                    showBar("Ошибка сети!")
+                }
+                is FeedModelState.NotFound -> {
+                    showBar("Запись не найдена!")
+                }
+                is FeedModelState.BadRequest -> {
+                    showBar("Неправильный запрос!")
+                }
+                is FeedModelState.Loading -> {
+                    // Можно добавить дополнительную логику, если необходимо
+                }
+                is FeedModelState.Refreshing -> {
+                    // Можно добавить дополнительную логику, если необходимо
+                }
+                is FeedModelState.AuthStatus -> {
+                    // Можно добавить дополнительную логику, если необходимо
+                }
+                is FeedModelState.Success<*> -> {
+                    // Можно добавить дополнительную логику, если необходимо
+                }
+                is FeedModelState.State -> {
+                    // Можно добавить дополнительную логику, если необходимо
+                }
+                // Добавьте обработку других состояний
+                else -> {
+                    // Обработка по умолчанию, если необходимо
+                }
             }
         }
 
@@ -185,7 +213,6 @@ class ScreenPosts : Fragment() {
 
                 else -> false
             }
-
         }
 
         binding?.fab?.setOnClickListener {
@@ -203,12 +230,10 @@ class ScreenPosts : Fragment() {
                 )
                     .show(childFragmentManager, "TAG")
             }
-
         }
 
         return binding?.root!!
     }
-
 
     override fun onResume() {
         binding?.bottomNavigation?.selectedItemId = R.id.menu_posts

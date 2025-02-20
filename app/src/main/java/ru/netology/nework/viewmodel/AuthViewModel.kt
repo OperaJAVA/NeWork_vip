@@ -34,103 +34,84 @@ class AuthViewModel @Inject constructor(
     val authState: LiveData<AppAuth.AuthState>
         get() = appAuth.authState.asLiveData()
 
-
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-
     fun getRegFromServer(login: String, pass: String, name: String, upload: MediaUpload) {
         viewModelScope.launch {
             try {
-                _dataState.value = FeedModelState(loading = true)
-                val user = repository.userReg(login, pass, name, upload) // send to server
+                _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
+                val user = repository.userReg(login, pass, name, upload) // Отправляем на сервер
 
                 user?.let {
                     if (user.id != 0L && user.token != null) {
-                        appAuth.run {
-                            appAuth.setAuth(user.id, login, pass, user.token)
-                        }
+                        appAuth.setAuth(user.id, login, pass, user.token)
                     }
                 }
-                _dataState.value = FeedModelState()
+                _dataState.value = FeedModelState.Success(user) // Успешное состояние
             } catch (e: Exception) {
-                when (e.javaClass.name) {
-                    "ru.netology.nework.error.ApiError403" -> {
-                        _dataState.value = FeedModelState(error403 = true)
+                when (e) {
+                    is ru.netology.nework.error.ApiError403 -> {
+                        _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
-
-                    "ru.netology.nework.error.ApiError415" -> {
-                        _dataState.value = FeedModelState(error415 = true)
+                    is ru.netology.nework.error.ApiError415 -> {
+                        _dataState.value = FeedModelState.UnsupportedMediaType // Ошибка 415
                     }
-
                     else -> {
-                        _dataState.value = FeedModelState(error = true)
+                        _dataState.value = FeedModelState.Error // Общая ошибка
                     }
                 }
-
             }
         }
     }
-
 
     fun getAuthFromServer(login: String, pass: String) {
         viewModelScope.launch {
             try {
-                _dataState.value = FeedModelState(loading = true)
+                _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
                 val user = repository.userAuth(login, pass)
 
                 if (user?.id != 0L && user?.token != null) {
                     val myAcc = repositoryUser.getUser(user.id)
-                    appAuth.run {
-                        appAuth.setAuth(user.id, login, pass, user.token)
-                        appAuth.saveMyAcc(myAcc)
-                    }
+                    appAuth.setAuth(user.id, login, pass, user.token)
+                    appAuth.saveMyAcc(myAcc)
                 }
 
                 myID = user?.id
                 userAuth = true
-                //println(user)
-                _dataState.value = FeedModelState(statusAuth = userAuth)
+                _dataState.value = FeedModelState.AuthStatus // Статус аутентификации
             } catch (e: Exception) {
                 userAuth = false
-                println("e.javaClass.name ${e.javaClass.name}")
-                when (e.javaClass.name) {
-                    "ru.netology.nework.error.ApiError400" -> {
-                        _dataState.value = FeedModelState(error400 = true)
+                when (e) {
+                    is ru.netology.nework.error.ApiError400 -> {
+                        _dataState.value = FeedModelState.BadRequest // Ошибка 400
                     }
-
-                    "ru.netology.nework.error.ApiError404" -> {
-                        _dataState.value = FeedModelState(error404 = true)
+                    is ru.netology.nework.error.ApiError404 -> {
+                        _dataState.value = FeedModelState.NotFound // Не найдено
                     }
-
                     else -> {
-                        _dataState.value = FeedModelState(error = true)
+                        _dataState.value = FeedModelState.Error // Общая ошибка
                     }
                 }
-
             }
-
         }
     }
 
     fun getMyAcc(): UserResponse = appAuth.getMyAcc()
+
     fun deleteAuth() {
         viewModelScope.launch {
             try {
-                _dataState.value = FeedModelState(loading = true)
+                _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
                 repository.signOut()
-                appAuth.run {
-                    appAuth.removeAuth()
-                }
+                appAuth.removeAuth()
                 myID = null
                 userAuth = false
-                _dataState.value = FeedModelState(statusAuth = userAuth)
-            } catch (e: Exception){
+                _dataState.value = FeedModelState.AuthStatus // Обновляем статус аутентификации
+            } catch (e: Exception) {
                 println(e.printStackTrace())
             }
-
         }
     }
-
 }

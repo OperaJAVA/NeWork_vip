@@ -17,24 +17,25 @@ import ru.netology.nework.adapter.AdapterUsersList
 import ru.netology.nework.adapter.ListenerSelectionUser
 import ru.netology.nework.databinding.ScreenUsersBinding
 import ru.netology.nework.dto.UserResponse
+import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.UsersViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @AndroidEntryPoint
-
 class ScreenUsers : Fragment() {
-    var binding: ScreenUsersBinding? = null
+    private var binding: ScreenUsersBinding? = null
     private val viewModelAuth: AuthViewModel by viewModels()
+    private val viewModel: UsersViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        val viewModel: UsersViewModel by viewModels()
-        binding = ScreenUsersBinding.inflate(layoutInflater)
+        binding = ScreenUsersBinding.inflate(inflater)
         binding?.bottomNavigationUsers?.selectedItemId = R.id.menu_users
+
         val adapter = AdapterUsersList(object : ListenerSelectionUser {
             override fun selectUser(user: UserResponse?) {
                 val id = user?.id
@@ -45,25 +46,20 @@ class ScreenUsers : Fragment() {
                             userArg = user
                         }
                     }
-
                 )
             }
 
             override fun addUser(idUser: Long?) {
-
+                // Реализация добавления пользователя
             }
 
             override fun removeUser(idUser: Long?) {
-
+                // Реализация удаления пользователя
             }
         }, false)
 
         fun showBar(txt: String) {
-            Snackbar.make(
-                binding?.root!!,
-                txt,
-                Snackbar.LENGTH_LONG
-            ).show()
+            Snackbar.make(binding?.root!!, txt, Snackbar.LENGTH_LONG).show()
         }
 
         binding?.listUsers?.adapter = adapter
@@ -71,18 +67,21 @@ class ScreenUsers : Fragment() {
         viewModel.listUsers.observe(viewLifecycleOwner) { users ->
             adapter.submitList(users)
         }
+
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
-            binding?.progress?.isVisible = state.loading
-            binding?.swipeRefreshLayout?.isRefreshing = state.refreshing
+            binding?.progress?.isVisible = state is FeedModelState.Loading
+            binding?.swipeRefreshLayout?.isRefreshing = state is FeedModelState.Refreshing
 
-            if (state.error) {
-                Snackbar.make(binding?.root!!, R.string.error_loading, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.retry_loading) { viewModel.loadUsers() }
-                    .show()
-            }
-
-            if (state.error403) {
-                showBar("Доступ закрыт, выполните вход")
+            when (state) {
+                is FeedModelState.Error -> {
+                    Snackbar.make(binding?.root!!, R.string.error_loading, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.retry_loading) { viewModel.loadUsers() }
+                        .show()
+                }
+                is FeedModelState.Unauthorized -> {
+                    showBar("Доступ закрыт, выполните вход")
+                }
+                else -> {}
             }
         }
 
@@ -102,23 +101,14 @@ class ScreenUsers : Fragment() {
         binding?.bottomNavigationUsers?.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menu_posts -> {
-                    findNavController().navigate(
-                        R.id.screenPosts,
-                    )
+                    findNavController().navigate(R.id.screenPosts)
                     true
                 }
-
                 R.id.menu_events -> {
-                    findNavController().navigate(
-                        R.id.screenEvents,
-                    )
+                    findNavController().navigate(R.id.screenEvents)
                     true
                 }
-                R.id.menu_users -> {
-
-                    true
-                }
-
+                R.id.menu_users -> true
                 else -> false
             }
         }
@@ -130,5 +120,4 @@ class ScreenUsers : Fragment() {
         binding?.bottomNavigationUsers?.selectedItemId = R.id.menu_users
         super.onResume()
     }
-
 }

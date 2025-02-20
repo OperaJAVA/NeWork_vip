@@ -53,6 +53,7 @@ import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.enumeration.MeetingType
 import ru.netology.nework.error.UnknownError
 import ru.netology.nework.media.MediaModel
+import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.model.StatusModelViews
 import ru.netology.nework.util.AndroidUtils.getFileName
 import ru.netology.nework.util.AndroidUtils.getTime
@@ -337,11 +338,33 @@ class NewEvent : Fragment() {
             }
         }
 
-        viewModelEvent.dataState.observe(viewLifecycleOwner) {
-            if (it.loading) binding.btnClear.visibility = View.GONE
-            if (!it.loading && lastStateLoading) findNavController().navigateUp()
-            binding.progress.isVisible = it.loading
-            lastStateLoading = it.loading
+        viewModelEvent.dataState.observe(viewLifecycleOwner) { dataState ->
+            when (dataState) {
+                is FeedModelState.Loading -> {
+                    binding.btnClear.visibility = View.GONE
+                    binding.progress.isVisible = true
+                    lastStateLoading = true
+                }
+                is FeedModelState.Error -> {
+                    // Обработка ошибки, если необходимо
+                    binding.progress.isVisible = false
+                }
+                is FeedModelState.Success<*> -> {
+                    binding.progress.isVisible = false
+                    // Дополнительная логика, если нужно
+                    dataState.data // Получите данные из состояния
+                    // Используйте данные по мере необходимости
+                }
+                else -> {
+                    // Убедитесь, что вы обрабатываете другие состояния
+                    binding.progress.isVisible = false
+                }
+            }
+
+            // Логика для навигации
+            if (!lastStateLoading && dataState is FeedModelState.Loading) {
+                findNavController().navigateUp()
+            }
         }
 
         viewModelLays.typeAttach.observe(viewLifecycleOwner) {}
@@ -423,7 +446,6 @@ class NewEvent : Fragment() {
             btnClear.setOnClickListener {
                 cleanContent()
                 viewModelLays.setLoadingGroup()
-                //viewModelLays.setImageGroup()
             }
 
             content.setOnTouchListener { _, event ->

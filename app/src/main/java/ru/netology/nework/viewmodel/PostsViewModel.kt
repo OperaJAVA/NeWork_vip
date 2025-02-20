@@ -23,10 +23,8 @@ import ru.netology.nework.repository.PostsRepository
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.myID
 import javax.inject.Inject
 
-
 @HiltViewModel
 @ExperimentalCoroutinesApi
-
 class PostsViewModel @Inject constructor(
     private val repository: PostsRepository,
 ) : ViewModel() {
@@ -36,7 +34,6 @@ class PostsViewModel @Inject constructor(
     }
         .cachedIn(viewModelScope)
         .flowOn(Dispatchers.Default)
-
 
     private val _userWall = MutableLiveData<List<Post>>()
     val userWall: LiveData<List<Post>>
@@ -60,22 +57,26 @@ class PostsViewModel @Inject constructor(
     }
 
     fun getUserPosts(id: Long) {
-        _dataState.value = FeedModelState(loading = true)
+        _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
         viewModelScope.launch {
             try {
                 repository.getUserPosts(id)
-                _dataState.value = FeedModelState()
+                _dataState.value = FeedModelState.Success(true) // Успешное состояние
             } catch (e: Exception) {
-                if (e.javaClass.name == "ru.netology.nework.error.ApiError403") {
-                    _dataState.value = FeedModelState(error403 = true)
+                when (e) {
+                    is ru.netology.nework.error.ApiError403 -> {
+                        _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
+                    }
+                    else -> {
+                        _dataState.value = FeedModelState.Error // Общая ошибка
+                    }
                 }
-                _dataState.value = FeedModelState(error = true)
             }
         }
     }
 
     fun savePost(post: Post, media: MultipartBody.Part?, typeAttach: AttachmentType?) {
-        _dataState.value = FeedModelState(loading = true)
+        _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
         viewModelScope.launch {
             try {
                 if (typeAttach != null && media != null) {
@@ -84,23 +85,20 @@ class PostsViewModel @Inject constructor(
                         post.copy(attachment = Attachment(_media.url, typeAttach))
                     repository.savePost(postWithAttachment)
                 } else {
-                    println("Save POST $post")
                     repository.savePost(post)
                 }
-                _dataState.value = FeedModelState()
+                _dataState.value = FeedModelState.Success(true) // Успешное состояние
 
             } catch (e: Exception) {
-                when (e.javaClass.name) {
-                    "ru.netology.nework.error.ApiError403" -> {
-                        _dataState.value = FeedModelState(error403 = true)
+                when (e) {
+                    is ru.netology.nework.error.ApiError403 -> {
+                        _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
-
-                    "ru.netology.nework.error.ApiError415" -> {
-                        _dataState.value = FeedModelState(error415 = true)
+                    is ru.netology.nework.error.ApiError415 -> {
+                        _dataState.value = FeedModelState.UnsupportedMediaType // Ошибка 415
                     }
-
                     else -> {
-                        _dataState.value = FeedModelState(error = true)
+                        _dataState.value = FeedModelState.Error // Общая ошибка
                     }
                 }
             }
@@ -108,58 +106,50 @@ class PostsViewModel @Inject constructor(
     }
 
     fun like(post: Post, like: Boolean) {
-        _dataState.value = FeedModelState(loading = true)
+        _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
         viewModelScope.launch {
             try {
                 repository.likePost(post.id, like)
-                _dataState.value = FeedModelState()
+                _dataState.value = FeedModelState.Success(true) // Успешное состояние
             } catch (e: Exception) {
-                when (e.javaClass.name) {
-                    "ru.netology.nework.error.ApiError403" -> {
-                        _dataState.value = FeedModelState(error403 = true)
+                when (e) {
+                    is ru.netology.nework.error.ApiError403 -> {
+                        _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
-
-                    "ru.netology.nework.error.ApiError404" -> {
-                        _dataState.value = FeedModelState(error404 = true)
+                    is ru.netology.nework.error.ApiError404 -> {
+                        _dataState.value = FeedModelState.NotFound // Не найдено
                     }
-
                     else -> {
-                        _dataState.value = FeedModelState(error = true)
+                        _dataState.value = FeedModelState.Error // Общая ошибка
                     }
                 }
             }
         }
-
     }
 
-
     fun removePost(post: Post) {
-        _dataState.value = FeedModelState(loading = true)
+        _dataState.value = FeedModelState.Loading // Устанавливаем состояние загрузки
         viewModelScope.launch {
             try {
                 repository.deletePost(post)
-                _dataState.value = FeedModelState()
+                _dataState.value = FeedModelState.Success(true) // Успешное состояние
             } catch (e: Exception) {
-                when (e.javaClass.name) {
-                    "ru.netology.nework.error.ApiError403" -> {
-                        _dataState.value = FeedModelState(error403 = true)
+                when (e) {
+                    is ru.netology.nework.error.ApiError403 -> {
+                        _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
-
-                    "ru.netology.nework.error.ApiError404" -> {
-                        _dataState.value = FeedModelState(error404 = true)
+                    is ru.netology.nework.error.ApiError404 -> {
+                        _dataState.value = FeedModelState.NotFound // Не найдено
                     }
-
                     else -> {
-                        _dataState.value = FeedModelState(error = true)
+                        _dataState.value = FeedModelState.Error // Общая ошибка
                     }
                 }
             }
         }
-
     }
 
     fun takePosts(list: List<Post>?) {
         list?.let { _userWall.value = it }
-
     }
 }

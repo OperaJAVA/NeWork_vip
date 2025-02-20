@@ -16,11 +16,13 @@ import ru.netology.nework.databinding.NewJobBinding
 import ru.netology.nework.date.DateJob
 import ru.netology.nework.dialog.DialogSelectRemoveJob
 import ru.netology.nework.dto.Job
+import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.util.AndroidUtils.getTimeJob
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.myID
 import ru.netology.nework.viewmodel.UsersViewModel
 
 
+@Suppress("UNREACHABLE_CODE")
 @OptIn(ExperimentalCoroutinesApi::class)
 @AndroidEntryPoint
 class NewJob : Fragment() {
@@ -71,23 +73,56 @@ class NewJob : Fragment() {
             }
         }
 
-        viewModelUser.dataState.observe(viewLifecycleOwner) {
-            binding?.progressLoad?.isVisible = it.loadingJob
-            if (it.error403) showBar("Ошибка авторизации,отказано в доступе!")
-            if (it.error404) showBar("Запись не найдена!")
-            if (it.error400) showBar("Не указана дата или некорректно введены данные!")
-            if (it.error) showBar("Проверьте ваше подключение к сети!")
-            if (!it.loadingJob && lastStateLoading) findNavController().navigateUp()
-            lastStateLoading = it.loadingJob
+        viewModelUser.dataState.observe(viewLifecycleOwner) { dataState ->
+            when (dataState) {
+                is FeedModelState.Loading -> {
+                    binding?.progressLoad?.isVisible = true
+                    lastStateLoading = true
+                }
+
+                is FeedModelState.Error -> {
+                    binding?.progressLoad?.isVisible = false
+                    showBar("Произошла ошибка!")
+                }
+
+                is FeedModelState.BadRequest -> {
+                    binding?.progressLoad?.isVisible = false
+                    showBar("Не указана дата или некорректно введены данные!")
+                }
+
+                is FeedModelState.Unauthorized -> {
+                    binding?.progressLoad?.isVisible = false
+                    showBar("Ошибка авторизации, отказано в доступе!")
+                }
+
+                is FeedModelState.NotFound -> {
+                    binding?.progressLoad?.isVisible = false
+                    showBar("Запись не найдена!")
+                }
+                // Можно добавить обработку других состояний, если они есть
+                is FeedModelState.Success<*> -> {
+                    binding?.progressLoad?.isVisible = false
+                    // Дополнительная логика для успешного состояния
+                }
+
+                else -> {
+                    binding?.progressLoad?.isVisible = false
+                }
+            }
+
+            // Логика для навигации
+            if (!lastStateLoading && dataState is FeedModelState.Loading) {
+                findNavController().navigateUp()
+            }
+            lastStateLoading = dataState is FeedModelState.Loading
         }
 
         return binding!!.root
     }
-
-    @SuppressLint("SetTextI18n")
-    fun getDateJob(date: DateJob) {
-        startDate = date.dateStart
-        finishDate = date.dateEnd
-        binding?.dateJob?.text = "${getTimeJob(startDate)} - ${getTimeJob(finishDate)}"
+        @SuppressLint("SetTextI18n")
+        fun getDateJob(date: DateJob) {
+            startDate = date.dateStart
+            finishDate = date.dateEnd
+            binding?.dateJob?.text = "${getTimeJob(startDate)} - ${getTimeJob(finishDate)}"
+        }
     }
-}

@@ -26,6 +26,7 @@ import ru.netology.nework.adapter.OnEventsListener
 import ru.netology.nework.databinding.ScreenEventsBinding
 import ru.netology.nework.dialog.DialogAuth
 import ru.netology.nework.dto.Event
+import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.myID
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.userAuth
@@ -33,12 +34,12 @@ import ru.netology.nework.viewmodel.EventsViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @AndroidEntryPoint
-
 class ScreenEvents : Fragment() {
 
     var binding: ScreenEventsBinding? = null
     val viewModelEvent: EventsViewModel by viewModels()
     private val viewModelAuth: AuthViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -93,7 +94,6 @@ class ScreenEvents : Fragment() {
                 if (event.authorId == myID) {
                     viewModelEvent.removeEvent(event)
                 }
-
             }
 
             override fun openCardEvent(event: Event) {
@@ -119,7 +119,6 @@ class ScreenEvents : Fragment() {
         })
 
         binding?.listEvents?.adapter = adapterEvents
-
 
         fun reload() {
             Snackbar.make(binding?.root!!, R.string.error_loading, Snackbar.LENGTH_LONG)
@@ -150,23 +149,39 @@ class ScreenEvents : Fragment() {
         }
 
         viewModelEvent.dataState.observe(viewLifecycleOwner) { state ->
-            binding?.progress?.isVisible = state.loading
-            binding?.swipeRefreshLayout?.isRefreshing = state.refreshing
+            when (state) {
+                is FeedModelState.Loading -> {
+                    binding?.progress?.isVisible = true
+                }
 
-            if (state.errorNetWork) {
-                reload()
-            }
+                is FeedModelState.Refreshing -> {
+                    binding?.swipeRefreshLayout?.isRefreshing = true
+                }
 
-            if (state.error403) {
-                userAuth = false
-                myID = null
-                showBar("Ошибка авторизации, выполните вход")
+                is FeedModelState.NetworkError -> {
+                    reload()
+                }
+
+                is FeedModelState.Unauthorized -> {
+                    userAuth = false
+                    myID = null
+                    showBar("Ошибка авторизации, выполните вход")
+                }
+
+                is FeedModelState.Error -> {
+                    showBar("Произошла ошибка!")
+                }
+
+                else -> {
+                    // Обработка других состояний, если необходимо
+                }
             }
         }
 
         binding?.swipeRefreshLayout?.setOnRefreshListener {
             adapterEvents.refresh()
         }
+
         binding?.swipeRefreshLayout?.setColorSchemeResources(
             android.R.color.holo_blue_bright,
             android.R.color.holo_green_light,
@@ -190,7 +205,6 @@ class ScreenEvents : Fragment() {
                 }
 
                 R.id.menu_events -> {
-
                     true
                 }
 

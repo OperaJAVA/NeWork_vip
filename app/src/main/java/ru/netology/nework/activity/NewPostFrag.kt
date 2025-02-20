@@ -47,6 +47,7 @@ import ru.netology.nework.dto.UserResponse
 import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.error.UnknownError
 import ru.netology.nework.media.MediaModel
+import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.util.AndroidUtils
 import ru.netology.nework.viewmodel.LaysViewModel
 import ru.netology.nework.viewmodel.PostsViewModel
@@ -87,7 +88,6 @@ class NewPostFrag : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        var lastStateLoading = false
         post = arguments?.postArg
         println("GET POST $post")
         val binding = NewPostBinding.inflate(layoutInflater)
@@ -324,13 +324,29 @@ class NewPostFrag : Fragment() {
             }
         }
 
-        viewModelPosts.dataState.observe(viewLifecycleOwner) {
-            if (it.loading) binding.btnClear.visibility = View.GONE
-            if (!it.loading && lastStateLoading) findNavController().navigateUp()
-            binding.progress.isVisible = it.loading
-            lastStateLoading = it.loading
+        viewModelPosts.dataState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is FeedModelState.Loading -> {
+                    binding.btnClear.visibility = View.GONE
+                    binding.progress.isVisible = true
+                }
+                is FeedModelState.Success<*> -> {
+                    binding.btnClear.visibility = View.VISIBLE
+                    binding.progress.isVisible = false
+                    // Обработка успешного состояния
+                }
+                is FeedModelState.Error -> {
+                    binding.btnClear.visibility = View.VISIBLE
+                    binding.progress.isVisible = false
+                    // Обработка ошибки
+                }
+                // Другие состояния...
+                else -> {
+                    binding.btnClear.visibility = View.VISIBLE
+                    binding.progress.isVisible = false
+                }
+            }
         }
-
         viewModelLays.typeAttach.observe(viewLifecycleOwner) {}
         viewModelLays.listUsersMentions.observe(viewLifecycleOwner) {}
 
@@ -345,7 +361,6 @@ class NewPostFrag : Fragment() {
         binding.bottomNavigationNewPost.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.add_pic -> {
-                    //multiPartBody = null
                     if (viewModelLays.newStatusViewsModel.value?.statusLoadingImg == false) {
                         viewModelLays.setTypeAttach(AttachmentType.IMAGE)
                         ImagePicker.with(this)
@@ -413,7 +428,6 @@ class NewPostFrag : Fragment() {
             btnClear.setOnClickListener {
                 cleanContent()
                 viewModelLays.setLoadingGroup()
-                //viewModelLays.setImageGroup()
             }
             content.setOnTouchListener { _, post ->
                 when (post.action) {

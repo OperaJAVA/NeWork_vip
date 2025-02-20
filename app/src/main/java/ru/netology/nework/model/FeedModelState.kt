@@ -1,15 +1,15 @@
 package ru.netology.nework.model
 
-data class FeedModelState(
-    val loading: Boolean = false,
-    val error: Boolean = false,
-    val dbError: Boolean = false,
-    val error403: Boolean = false,
-    val error415: Boolean = false,
-    val error400: Boolean = false,
-    val error404: Boolean = false,
-    val errorNetWork: Boolean = false,
-    val refreshing: Boolean = false,
-    val statusAuth: Boolean = false,
-    val loadingJob: Boolean = false
-)
+sealed class FeedModelState {
+    object Loading : FeedModelState() // Состояние загрузки
+    object Error : FeedModelState() // Общее состояние ошибки
+    object NotFound : FeedModelState() // Запись не найдена
+    object Unauthorized : FeedModelState() // Ошибка авторизации
+    object BadRequest : FeedModelState() // Ошибка 400
+    object UnsupportedMediaType : FeedModelState() // Ошибка 415
+    object NetworkError : FeedModelState() // Ошибка сети
+    object Refreshing : FeedModelState() // Состояние обновления
+    object AuthStatus : FeedModelState() // Статус аутентификации
+    data class Success<T>(val data: T) : FeedModelState() // Успешный ответ с данными
+    data class State(val loading: Boolean) : FeedModelState() // Состояние с флагом загрузки
+}
