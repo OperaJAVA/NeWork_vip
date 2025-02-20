@@ -11,5 +11,10 @@ sealed class FeedModelState {
     object Refreshing : FeedModelState() // Состояние обновления
     object AuthStatus : FeedModelState() // Статус аутентификации
     data class Success<T>(val data: T) : FeedModelState() // Успешный ответ с данными
-    data class State(val loading: Boolean) : FeedModelState() // Состояние с флагом загрузки
+    data class State(
+        val loading: Boolean,
+        val error400: Boolean = false,
+        val error404: Boolean = false,
+        val error: Boolean = false
+    ) : FeedModelState() // Состояние с флагом загрузки и ошибками
 }
