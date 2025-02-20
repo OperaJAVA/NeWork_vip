@@ -1,6 +1,7 @@
 package ru.netology.nework.players
 
 import android.media.MediaPlayer
+import android.util.Log
 import java.io.IOException
 
 class MPlayer {
@@ -15,15 +16,13 @@ class MPlayer {
         try {
             if (player == null) {
                 player = MediaPlayer().apply {
-                    this.setDataSource(
-                        link
-                    )
-                    this.setOnPreparedListener {
+                    setDataSource(link)
+                    setOnPreparedListener {
                         dt.getDuration(it.duration)
                         it.start()
                     }
-                    this.prepareAsync()
-                    this.setOnCompletionListener{
+                    prepareAsync()
+                    setOnCompletionListener {
                         dt.onCompletionPlay()
                     }
                 }
@@ -32,7 +31,7 @@ class MPlayer {
             }
 
         } catch (e: IOException) {
-            println(e)
+            Log.e("MPlayer", "IOException while playing media", e)
         }
     }
 
@@ -40,21 +39,16 @@ class MPlayer {
         try {
             if (player?.isPlaying == true) player?.pause()
         } catch (e: IOException) {
-            println(e)
+            Log.e("MPlayer", "IOException while pausing media", e)
         }
-
     }
 
     fun stopPlayer() {
         try {
-            if (player != null) {
-                player!!.release()
-                player = null
-            }
+            player?.release()
+            player = null
         } catch (e: IOException) {
-            println(e)
+            Log.e("MPlayer", "IOException while stopping media", e)
         }
-
     }
-
 }
