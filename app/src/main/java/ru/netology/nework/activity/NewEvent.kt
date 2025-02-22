@@ -47,6 +47,7 @@ import ru.netology.nework.adapter.ListenerSelectionUser
 import ru.netology.nework.adapter.YaKit
 import ru.netology.nework.databinding.NewEventBinding
 import ru.netology.nework.date.DateEvent
+import ru.netology.nework.date.getTime
 import ru.netology.nework.dto.Event
 import ru.netology.nework.dto.UserResponse
 import ru.netology.nework.enumeration.AttachmentType
@@ -56,7 +57,6 @@ import ru.netology.nework.media.MediaModel
 import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.model.StatusModelViews
 import ru.netology.nework.util.AndroidUtils.getFileName
-import ru.netology.nework.util.AndroidUtils.getTime
 import ru.netology.nework.util.AndroidUtils.getTimeFormat
 import ru.netology.nework.viewmodel.EventsViewModel
 import ru.netology.nework.viewmodel.LaysViewModel
@@ -170,7 +170,6 @@ class NewEvent : Fragment() {
                                         AttachmentType.VIDEO
                                     )
                                 }
-                                println("MULTI $it")
                                 multiPart = uploadStream(viewModelLays.mediaFile.value!!)
                             }
 
@@ -186,7 +185,6 @@ class NewEvent : Fragment() {
                             }
                             if (viewModelLays.typeAttach.value == null) {
                                 viewModelLays.cleanAttach()
-                                println("Attach Null")
                             }
                             val text = binding.content.text.toString()
                             val event = viewModelLays.getEvent(text)
@@ -345,16 +343,19 @@ class NewEvent : Fragment() {
                     binding.progress.isVisible = true
                     lastStateLoading = true
                 }
+
                 is FeedModelState.Error -> {
                     // Обработка ошибки, если необходимо
                     binding.progress.isVisible = false
                 }
+
                 is FeedModelState.Success<*> -> {
                     binding.progress.isVisible = false
                     // Дополнительная логика, если нужно
                     dataState.data // Получите данные из состояния
                     // Используйте данные по мере необходимости
                 }
+
                 else -> {
                     // Убедитесь, что вы обрабатываете другие состояния
                     binding.progress.isVisible = false
@@ -377,12 +378,18 @@ class NewEvent : Fragment() {
                 vibratePhone()
             }
         }
-
         viewModelLays.dateEvent.observe(viewLifecycleOwner) {
-            if (viewModelLays.dateEvent.value?.date == null) {
-                viewModelLays.setDataTime(DateEvent(getTime(), null, MeetingType.ONLINE))
+            val currentDateEvent = it // Получаем текущее значение события
+            if (currentDateEvent?.date == null) { // Проверяем, если дата равна null
+                viewModelLays.setDataTime(
+                    DateEvent(
+                        getTime(),
+                        null,
+                        MeetingType.ONLINE
+                    )
+                ) // Устанавливаем дату
             }
-            binding.currentDateTime.text = viewModelLays.dateEvent.value?.date
+            binding.currentDateTime.text = currentDateEvent?.date // Обновляем текст
         }
 
         binding.bottomNavigationNewEvent.setOnItemSelectedListener { item ->
@@ -609,3 +616,4 @@ class NewEvent : Fragment() {
         vibrator.vibrate(VibrationEffect.createOneShot(70, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 }
+

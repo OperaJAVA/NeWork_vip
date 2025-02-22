@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -28,12 +29,14 @@ import ru.netology.nework.error.UnknownError
 import ru.netology.nework.viewmodel.AuthViewModel
 import java.io.IOException
 import javax.inject.Inject
+import android.util.Log
+import retrofit2.Response
 
 class EventsRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val daoEvents: EventDao,
-    eventRemoteKeyDao: EventRemoteKeyDao,
-    appDb: AppDb,
+    private val eventRemoteKeyDao: EventRemoteKeyDao,
+    private val appDb: AppDb,
 ) : EventsRepository {
 
     private val _eventsFlow = MutableStateFlow(emptyList<Event>())
@@ -53,8 +56,7 @@ class EventsRepositoryImpl @Inject constructor(
             eventDao = daoEvents,
             eventRemoteKeyDao = eventRemoteKeyDao,
             db = appDb,
-
-            )
+        )
     ).flow
         .map {
             it.map(EventEntity::toDto)
@@ -62,15 +64,12 @@ class EventsRepositoryImpl @Inject constructor(
 
     override suspend fun getEvents() {
         try {
-
             val response = apiService.getEvents()
 
             if (!response.isSuccessful) {
-                when (response.code()) {
-                    403 -> throw ApiError403(response.code().toString())
-                    else -> throw ApiError(response.code(), response.message())
-                }
+                handleApiError(response)
             }
+
             val events = response.body() ?: throw ApiError(response.code(), response.message())
             val _events = events.map {
                 if (AuthViewModel.myID == it.authorId) {
@@ -82,10 +81,10 @@ class EventsRepositoryImpl @Inject constructor(
             )
 
         } catch (e: IOException) {
+            Log.e("EventsRepositoryImpl", "Network error while fetching events", e)
             throw NetworkError
-        } catch (e: ApiError403) {
-            throw ApiError403("403")
         } catch (e: Exception) {
+            Log.e("EventsRepositoryImpl", "Error while fetching events", e)
             throw UnknownError
         }
     }
@@ -93,30 +92,22 @@ class EventsRepositoryImpl @Inject constructor(
     override suspend fun likeEvent(id: Long, like: Boolean) {
         try {
             if (like) {
-
-
                 val response = apiService.likeEventId(id)
 
                 if (!response.isSuccessful) {
-                    when (response.code()) {
-                        403 -> throw ApiError403(response.code().toString())
-                        404 -> throw ApiError404(response.code().toString())
-                        else -> throw ApiError(response.code(), response.message())
-                    }
+                    handleApiError(response)
                 }
-                val event = response.body() ?: throw ApiError(response.code(), response.message())
-                daoEvents.insertEvent(
-                    EventEntity.fromDto(event)
-                )
-            } else dislikeEvent(id)
 
+                val event = response.body() ?: throw ApiError(response.code(), response.message())
+                daoEvents.insertEvent(EventEntity.fromDto(event))
+            } else {
+                dislikeEvent(id)
+            }
         } catch (e: IOException) {
+            Log.e("EventsRepositoryImpl", "Network error while liking event", e)
             throw NetworkError
-        } catch (e: ApiError403) {
-            throw ApiError403("403")
-        } catch (e: ApiError404) {
-            throw ApiError404("404")
         } catch (e: Exception) {
+            Log.e("EventsRepositoryImpl", "Error while liking event", e)
             throw UnknownError
         }
     }
@@ -126,24 +117,17 @@ class EventsRepositoryImpl @Inject constructor(
             val response = apiService.dislikeEventId(id)
 
             if (!response.isSuccessful) {
-                when (response.code()) {
-                    403 -> throw ApiError403(response.code().toString())
-                    404 -> throw ApiError404(response.code().toString())
-                    else -> throw ApiError(response.code(), response.message())
-                }
+                handleApiError(response)
             }
+
             val event = response.body() ?: throw ApiError(response.code(), response.message())
-            daoEvents.insertEvent(
-                EventEntity.fromDto(event)
-            )
+            daoEvents.insertEvent(EventEntity.fromDto(event))
 
         } catch (e: IOException) {
+            Log.e("EventsRepositoryImpl", "Network error while disliking event", e)
             throw NetworkError
-        } catch (e: ApiError403) {
-            throw ApiError403("403")
-        } catch (e: ApiError404) {
-            throw ApiError404("404")
         } catch (e: Exception) {
+            Log.e("EventsRepositoryImpl", "Error while disliking event", e)
             throw UnknownError
         }
     }
@@ -153,47 +137,32 @@ class EventsRepositoryImpl @Inject constructor(
             val response = apiService.sendEvent(event)
 
             if (!response.isSuccessful) {
-                when (response.code()) {
-                    403 -> throw ApiError403(response.code().toString())
-                    404 -> throw ApiError404(response.code().toString())
-                    else -> throw ApiError(response.code(), response.message())
-                }
+                handleApiError(response)
             }
-            val getEvent = response.body() ?: throw ApiError(response.code(), response.message())
-            daoEvents.insertEvent(
-                EventEntity.fromDto(getEvent)
-            )
 
-        } catch (e: ApiError403) {
-            println("EXC 403")
-            throw ApiError403("403")
+            val getEvent = response.body() ?: throw ApiError(response.code(), response.message())
+            daoEvents.insertEvent(EventEntity.fromDto(getEvent))
+
         } catch (e: Exception) {
-            println("EXC ___${e.javaClass.name}")
+            Log.e("EventsRepositoryImpl", "Error while saving event", e)
             throw UnknownError
         }
     }
 
     override suspend fun deleteEvent(event: Event) {
         try {
-
             daoEvents.removeEventById(event.id!!)
             val response = apiService.removeEvent(event.id)
             if (!response.isSuccessful) {
-                println("!response.isSuccessful")
                 daoEvents.insertEvent(EventEntity.fromDto(event))
-                when (response.code()) {
-                    403 -> throw ApiError403(response.code().toString())
-                    else -> throw ApiError(response.code(), response.message())
-                }
+                handleApiError(response)
             }
 
         } catch (e: IOException) {
+            Log.e("EventsRepositoryImpl", "Network error while deleting event", e)
             throw NetworkError
-        } catch (e: ApiError403) {
-            throw ApiError403("403")
-        } catch (e: ApiError404) {
-            throw ApiError404("404")
         } catch (e: Exception) {
+            Log.e("EventsRepositoryImpl", "Error while deleting event", e)
             throw UnknownError
         }
     }
@@ -201,36 +170,31 @@ class EventsRepositoryImpl @Inject constructor(
     override suspend fun participateEvent(id: Long, status: Boolean) {
         try {
             if (status) {
-
                 val response = apiService.participantsId(id)
                 if (!response.isSuccessful) {
-                    when (response.code()) {
-                        403 -> throw ApiError403(response.code().toString())
-                        404 -> throw ApiError404(response.code().toString())
-                        else -> throw ApiError(response.code(), response.message())
-                    }
+                    handleApiError(response)
                 }
                 val event = response.body() ?: throw ApiError(response.code(), response.message())
-                daoEvents.insertEvent(
-                    EventEntity.fromDto(event)
-                )
-            } else delParticipateEvent(id)
+                daoEvents.insertEvent(EventEntity.fromDto(event))
+            } else {
+                delParticipateEvent(id)
+            }
 
         } catch (e: IOException) {
+            Log.e("EventsRepositoryImpl", "Network error while participating in event", e)
             throw NetworkError
-        } catch (e: ApiError403) {
-            throw ApiError403("403")
-        } catch (e: ApiError404) {
-            throw ApiError404("404")
         } catch (e: Exception) {
+            Log.e("EventsRepositoryImpl", "Error while participating in event", e)
             throw UnknownError
         }
     }
 
     override suspend fun getEventsDB() {
-        daoEvents.getEvents().flowOn(Dispatchers.IO).collect { events ->
-            _eventsFlow.update { events.toDto() }
-        }
+        daoEvents.getEvents()
+            .flowOn(Dispatchers.IO)
+            .collect { events ->
+                _eventsFlow.update { events.toDto() }
+            }
     }
 
     private suspend fun delParticipateEvent(id: Long) {
@@ -238,26 +202,26 @@ class EventsRepositoryImpl @Inject constructor(
             val response = apiService.delParticipantsId(id)
 
             if (!response.isSuccessful) {
-                when (response.code()) {
-                    403 -> throw ApiError403(response.code().toString())
-                    404 -> throw ApiError404(response.code().toString())
-                    else -> throw ApiError(response.code(), response.message())
-                }
+                handleApiError(response)
             }
+
             val event = response.body() ?: throw ApiError(response.code(), response.message())
-            daoEvents.insertEvent(
-                EventEntity.fromDto(event)
-            )
+            daoEvents.insertEvent(EventEntity.fromDto(event))
 
         } catch (e: IOException) {
+            Log.e("EventsRepositoryImpl", "Network error while deleting participation", e)
             throw NetworkError
-        } catch (e: ApiError403) {
-            throw ApiError403("403")
-        } catch (e: ApiError404) {
-            throw ApiError404("404")
         } catch (e: Exception) {
+            Log.e("EventsRepositoryImpl", "Error while deleting participation", e)
             throw UnknownError
         }
     }
 
+    private fun handleApiError(response: Response<*>) {
+        when (response.code()) {
+            403 -> throw ApiError403(response.code().toString())
+            404 -> throw ApiError404(response.code().toString())
+            else -> throw ApiError(response.code(), response.message())
+        }
+    }
 }

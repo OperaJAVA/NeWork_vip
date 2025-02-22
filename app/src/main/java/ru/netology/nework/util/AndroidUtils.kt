@@ -81,9 +81,6 @@ object AndroidUtils {
     }
 
     @SuppressLint("SimpleDateFormat")
-    fun getTime(): String =
-        SimpleDateFormat("dd MMMM yyyy в HH:mm").format(Calendar.getInstance().time).toString()
-    @SuppressLint("SimpleDateFormat")
     fun getDate(): String =
         SimpleDateFormat("dd MMMM yyyy").format(Calendar.getInstance().time).toString()
     @SuppressLint("SimpleDateFormat")
