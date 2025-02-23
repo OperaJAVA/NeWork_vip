@@ -247,7 +247,7 @@ override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                                     return@registerForActivityResult
                                 }
                                 viewModelLays.setTypeAttach(null)
-                                requireContext().toast(context.getString(R.string.invalid_file_format))
+                                requireContext().toast(getString(R.string.invalid_file_format))
                             }
 
                         }
@@ -266,7 +266,7 @@ override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                                     return@registerForActivityResult
                                 }
                                 viewModelLays.setTypeAttach(null)
-                                requireContext().toast(context.getString(R.string.invalid_file_format))
+                                requireContext().toast(getString(R.string.invalid_file_format))
                             }
                         }
 

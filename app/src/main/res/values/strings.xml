@@ -86,7 +86,11 @@
     <string name="cur_time">Now</string>
     <string name="format_date">__.__.____</string>
 
-    <string name="logout_confirmation">Выйти из аккаунта?</string>
-    <string name="logout_message">Вы вышли из аккаунта.</string>
+    <string name="logout_confirmation">Log out of your account?</string>
+    <string name="logout_message">You have logged out of your account.</string>
+
+    <string name="date_time_required">Date and time of the event is required!</string>
+    <string name="file_size_exceeded">Attachment size exceeds the maximum allowed 15MB!</string>
+    <string name="invalid_file_format">Invalid file format, please upload an audio file!</string>
 
 </resources>
