@@ -153,7 +153,7 @@ class NewEvent : Fragment() {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_save, menu)
             }
-
+// 23.02.2025
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                 when (menuItem.itemId) {
                     R.id.save -> {
@@ -192,7 +192,7 @@ class NewEvent : Fragment() {
                             val text = binding.content.text.toString()
                             val event = viewModelLays.getEvent(text)
                             if (event?.datetime == null) {
-                                context?.toast("Необходимо установить дату и время события!")
+                                context?.toast(context.getString(R.string.date_time_required))
                             } else {
                                 viewModelEvent.saveEvent(
                                     event,
@@ -236,7 +236,7 @@ class NewEvent : Fragment() {
                                 viewModelLays.setImageGroup()
                             } else {
                                 viewModelLays.setTypeAttach(null)
-                                context?.toast("Размер вложения превышает максимально допустимый 15Мб!")
+                                context?.toast(context.getString(R.string.file_size_exceeded))
                             }
 
                         }
@@ -247,7 +247,7 @@ class NewEvent : Fragment() {
                                 val content = getContentLoading(_uri, "audio/")
                                 content?.let { cont ->
                                     if (cont.length!! > MAX_SIZE_FILE) {
-                                        context?.toast("Размер вложения превышает максимально допустимый 15Мб!")
+                                        context?.toast(context.getString(R.string.file_size_exceeded))
                                         return@registerForActivityResult
                                     }
                                     viewModelLays.changeMedia(cont)
@@ -255,7 +255,7 @@ class NewEvent : Fragment() {
                                     return@registerForActivityResult
                                 }
                                 viewModelLays.setTypeAttach(null)
-                                context?.toast("Неправильный формат файла, загрузите аудио файл!")
+                                context?.toast(context.getString(R.string.invalid_file_format))
                             }
 
                         }
@@ -266,7 +266,7 @@ class NewEvent : Fragment() {
                                 val content = getContentLoading(_uri, "video/")
                                 content?.let { cont ->
                                     if (cont.length!! > MAX_SIZE_FILE) {
-                                        context?.toast("Размер вложения превышает максимально допустимый 15Мб!")
+                                        context?.toast(context.getString(R.string.file_size_exceeded))
                                         return@registerForActivityResult
                                     }
                                     viewModelLays.changeMedia(cont)
@@ -274,7 +274,7 @@ class NewEvent : Fragment() {
                                     return@registerForActivityResult
                                 }
                                 viewModelLays.setTypeAttach(null)
-                                context?.toast("Неправильный формат файла, загрузите видео файл!")
+                                context?.toast(context.getString(R.string.invalid_file_format))
                             }
                         }
 

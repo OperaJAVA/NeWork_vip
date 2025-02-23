@@ -91,4 +91,8 @@
     <string name="logout_confirmation">Выйти из аккаунта?</string>
     <string name="logout_message">Вы вышли из аккаунта.</string>
 
+    <string name="date_time_required">Необходимо установить дату и время события!</string>
+    <string name="file_size_exceeded">Размер вложения превышает максимально допустимый 15Мб!</string>
+    <string name="invalid_file_format">Неправильный формат файла, загрузите аудио файл!</string>
+
 </resources>
