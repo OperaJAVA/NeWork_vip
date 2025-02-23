@@ -16,49 +16,51 @@ import ru.netology.nework.databinding.SelectionUsersBinding
 import ru.netology.nework.dto.UserResponse
 import ru.netology.nework.error.UnknownError
 
-class SelectionUsersFrag: Fragment() {
+class SelectionUsersFrag : Fragment() {
+
+    private var curFrag: CurrentShowFragment? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = SelectionUsersBinding.inflate(layoutInflater)
-        val listUsers = arguments?.listUserArg
+        val binding = SelectionUsersBinding.inflate(inflater, container, false)
+        val listUsers = arguments?.listUserArg // Получаем список пользователей из аргументов
 
-
-        val adapterUserResponse = AdapterUsersList(object : ListenerSelectionUser{
+        // Инициализация адаптера для списка пользователей
+        val adapterUserResponse = AdapterUsersList(object : ListenerSelectionUser {
             override fun selectUser(user: UserResponse?) {
                 val id = user?.id
+                // Навигация к экрану аккаунта пользователя
                 findNavController().navigate(
                     R.id.userAccount,
                     id?.let {
-                        Bundle().apply {
-                            userArg = user
-                        }
+                        Bundle().apply { userArg = user }
                     }
-
                 )
             }
 
             override fun addUser(idUser: Long?) {
-
+                // Логика добавления пользователя, если нужно
             }
 
             override fun removeUser(idUser: Long?) {
-
+                // Логика удаления пользователя, если нужно
             }
         }, false)
+
+        // Установка адаптера для RecyclerView
         binding.listUsers.adapter = adapterUserResponse
-        adapterUserResponse.submitList(listUsers)
+        adapterUserResponse.submitList(listUsers) // Передача списка пользователей в адаптер
 
         return binding.root
     }
 
-    private var curFrag: CurrentShowFragment? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            curFrag = context as CurrentShowFragment
+            curFrag = context as CurrentShowFragment // Привязываем фрагмент к текущему контексту
         } catch (e: ClassCastException) {
             throw UnknownError
         }
@@ -66,7 +68,7 @@ class SelectionUsersFrag: Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        curFrag?.getCurFragmentDetach()
+        curFrag?.getCurFragmentDetach() // Уведомляем текущий фрагмент о отсоединении
         curFrag = null
     }
 }

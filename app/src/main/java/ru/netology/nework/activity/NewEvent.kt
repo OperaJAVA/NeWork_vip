@@ -57,6 +57,7 @@ import ru.netology.nework.media.MediaModel
 import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.model.StatusModelViews
 import ru.netology.nework.util.AndroidUtils.getFileName
+
 import ru.netology.nework.util.AndroidUtils.getTimeFormat
 import ru.netology.nework.viewmodel.EventsViewModel
 import ru.netology.nework.viewmodel.LaysViewModel
@@ -170,6 +171,7 @@ class NewEvent : Fragment() {
                                         AttachmentType.VIDEO
                                     )
                                 }
+                                println("MULTI $it")
                                 multiPart = uploadStream(viewModelLays.mediaFile.value!!)
                             }
 
@@ -185,6 +187,7 @@ class NewEvent : Fragment() {
                             }
                             if (viewModelLays.typeAttach.value == null) {
                                 viewModelLays.cleanAttach()
+                                println("Attach Null")
                             }
                             val text = binding.content.text.toString()
                             val event = viewModelLays.getEvent(text)
@@ -616,4 +619,3 @@ class NewEvent : Fragment() {
         vibrator.vibrate(VibrationEffect.createOneShot(70, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 }
-

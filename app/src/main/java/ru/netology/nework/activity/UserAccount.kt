@@ -53,20 +53,22 @@ class UserAccount : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = UserAccountBinding.inflate(inflater)
-        val idUser = arguments?.userArg?.id!!
-        nameLoginUser =
-            "${arguments?.userArg?.name.toString()} / ${arguments?.userArg?.login.toString()}"
+        val idUser = arguments?.userArg?.id ?: return binding.root
+        nameLoginUser = "${arguments?.userArg?.name} / ${arguments?.userArg?.login}"
 
+        // Функция для отображения Snackbar
         fun showBar(txt: String) {
             Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
         }
 
+        // Загружаем данные пользователя и его записи
         lifecycleScope.launch {
             viewModelUser.getUser(idUser)
             viewModelUser.getUserJobs(idUser)
             viewModelPosts.getUserPosts(idUser)
         }
 
+        // Настройка адаптера для списка работ
         val adapterJobs = AdapterJobsList(object : ListenerSelectionJobs {
             override fun removeJob(job: Job) {
                 job.id?.let {
@@ -75,9 +77,9 @@ class UserAccount : Fragment() {
                 }
             }
         })
-
         binding.listJobs.adapter = adapterJobs
 
+        // Настройка адаптера для списка постов
         val adapterPosts = AdapterUserPosts(object : OnUserPostsListener {
             override fun onLike(post: Post) {
                 if (AuthViewModel.userAuth) {
@@ -118,27 +120,28 @@ class UserAccount : Fragment() {
                 )
             }
         })
-
         binding.listPosts.adapter = adapterPosts
 
+        // Функция для управления видимостью списков работ и постов
         fun showListJobs(status: Boolean) {
             binding.listPosts.visibility = if (status) View.GONE else View.VISIBLE
             binding.listJobs.visibility = if (status) View.VISIBLE else View.GONE
         }
 
+        // Наблюдение за списками пользователей
         viewModelUser.listUsers.observe(viewLifecycleOwner) { users ->
             viewModelUser.takeUser(users.find { it.id == idUser })
         }
 
+        // Наблюдение за аккаунтом пользователя
         viewModelUser.userAccount.observe(viewLifecycleOwner) { user ->
-            with(binding) {
-                Glide.with(imageAvatar)
-                    .load(user.avatar)
-                    .timeout(35_000)
-                    .into(imageAvatar)
-            }
+            Glide.with(binding.imageAvatar)
+                .load(user.avatar)
+                .timeout(35_000)
+                .into(binding.imageAvatar)
         }
 
+        // Наблюдение за состоянием отображения списка работ
         viewModelUser.statusShowListJobs.observe(viewLifecycleOwner) {
             if (it.statusShowListJobs) {
                 showListJobs(true)
@@ -151,20 +154,24 @@ class UserAccount : Fragment() {
             }
         }
 
+        // Наблюдение за работами пользователя
         viewModelUser.userJobs.observe(viewLifecycleOwner) { jobs ->
             adapterJobs.submitList(jobs.filter { it.idUser == idUser })
         }
 
+        // Наблюдение за постами пользователя
         viewModelPosts.userWall.observe(viewLifecycleOwner) { posts ->
             if (binding.listPosts.isVisible) {
                 adapterPosts.submitList(posts)
             }
         }
 
+        // Наблюдение за полученными постами
         viewModelPosts.receivedPosts.observe(viewLifecycleOwner) { posts ->
             viewModelPosts.takePosts(posts.filter { it.authorId == idUser })
         }
 
+        // Наблюдение за состоянием данных
         viewModelUser.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state is FeedModelState.Loading
             when (state) {
@@ -192,7 +199,7 @@ class UserAccount : Fragment() {
                     // Состояние обновления
                 }
                 is FeedModelState.Success<*> -> {
-                    // Успешное состояние, можно обработать данные, если необходимо
+                    // Успешное состояние
                 }
                 is FeedModelState.AuthStatus -> {
                     // Обработка статуса аутентификации
@@ -206,6 +213,7 @@ class UserAccount : Fragment() {
             }
         }
 
+        // Обработка навигации по вкладкам
         binding.wallJobsNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.jobs -> {
@@ -223,6 +231,7 @@ class UserAccount : Fragment() {
             }
         }
 
+        // Обработка нажатия на FAB
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.newJob)
         }

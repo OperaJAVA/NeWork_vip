@@ -3,6 +3,7 @@ package ru.netology.nework.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -36,10 +37,14 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @AndroidEntryPoint
 class PostView : Fragment() {
+
     private val viewModelMedia: MediaViewModel by viewModels()
+    private var binding: PostViewBinding? = null
+    private var curFrag: CurrentShowFragment? = null
 
     @Inject
     lateinit var yakit: YaKit
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,35 +52,36 @@ class PostView : Fragment() {
     ): View {
         val viewModel: PostsViewModel by viewModels()
         val viewModelUsers: UsersViewModel by viewModels()
-        val binding = PostViewBinding.inflate(layoutInflater)
+        binding = PostViewBinding.inflate(inflater, container, false)
+
+        // Получаем пост из аргументов
         val post = arguments?.postArg
         val txtShare = (post?.attachment?.url ?: post?.content).toString()
 
-
+        // Инициализация адаптера
         val adapter = container?.context?.let { _ ->
-            AdapterPostView(binding, object : OnIteractionListenerPostView {
+            AdapterPostView(binding!!, object : OnIteractionListenerPostView {
                 override fun onLike(post: Post) {
                     if (userAuth) {
                         viewModel.like(post, !post.likedByMe)
                     } else {
                         DialogAuth.newInstance(
                             AuthViewModel.DIALOG_IN,
-                            "Для установки лайков нужна нужно авторизоваться"
-                        )
-                            .show(childFragmentManager, "TAG")
+                            "Для установки лайков необходимо авторизоваться"
+                        ).show(childFragmentManager, "TAG")
                     }
                 }
 
                 override fun onEdit(post: Post) {
-
+                    // Edit functionality here
                 }
 
                 override fun onRemove(post: Post) {
-
+                    // Remove functionality here
                 }
 
                 override fun playAudio(link: String) {
-                    if (binding.playAudio.isChecked) {
+                    if (binding!!.playAudio.isChecked) {
                         viewModelMedia.playAudio(link)
                     } else {
                         viewModelMedia.pauseAudio()
@@ -83,7 +89,7 @@ class PostView : Fragment() {
                 }
 
                 override fun playVideo(link: String) {
-                    viewModelMedia.playVideo(link, binding.videoView)
+                    viewModelMedia.playVideo(link, binding!!.videoView)
                 }
 
                 override fun openSpacePhoto(post: Post) {
@@ -107,9 +113,10 @@ class PostView : Fragment() {
             }, yakit)
         }
 
-
+        // Наблюдение за изменениями списка пользователей
         viewModelUsers.listUsers.observe(viewLifecycleOwner) {}
 
+        // Наблюдение за полученными постами
         viewModel.receivedPosts.observe(viewLifecycleOwner) { posts ->
             val _post = posts.find { it.id == post?.id }
             _post?.let {
@@ -117,13 +124,13 @@ class PostView : Fragment() {
             }
         }
 
-
+        // Наблюдение за длительностью медиа
         viewModelMedia.duration.observe(viewLifecycleOwner) {
-            if (it != "STOP") binding.duration.text = it
-            else binding.playAudio.isChecked = false
+            if (it != "STOP") binding?.duration?.text = it
+            else binding?.playAudio?.isChecked = false
         }
 
-
+        // Добавление меню
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_share, menu)
@@ -132,20 +139,12 @@ class PostView : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                 when (menuItem.itemId) {
                     R.id.share -> {
-
-                        val intent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, txtShare)
-                            type = "text/plain"
-                        }
-                        val shareIntent =
-                            Intent.createChooser(intent, "Share Post")
-                        startActivity(shareIntent)
+                        sharePost(txtShare)
                         true
                     }
 
                     android.R.id.home -> {
-                        println("home")
+                        Log.d("PostView", "Navigating up")
                         viewModelMedia.stopAudio()
                         findNavController().navigateUp()
                         true
@@ -153,19 +152,30 @@ class PostView : Fragment() {
 
                     else -> false
                 }
-
         }, viewLifecycleOwner)
 
+        return binding!!.root
+    }
 
+    private fun sharePost(txtShare: String) {
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, txtShare)
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(intent, "Share Post")
+        startActivity(shareIntent)
+    }
 
-        return binding.root
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 
     fun stopMedia() {
         viewModelMedia.stopAudio()
     }
 
-    private var curFrag: CurrentShowFragment? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
@@ -184,7 +194,6 @@ class PostView : Fragment() {
     override fun onStart() {
         super.onStart()
         curFrag?.getCurFragmentAttach(getString(R.string.post))
-
     }
 
     override fun onStop() {
@@ -192,4 +201,3 @@ class PostView : Fragment() {
         super.onStop()
     }
 }
-

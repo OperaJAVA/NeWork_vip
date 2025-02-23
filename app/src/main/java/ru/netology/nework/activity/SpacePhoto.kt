@@ -15,42 +15,44 @@ import ru.netology.nework.error.UnknownError
 
 class SpacePhoto : Fragment() {
 
+    private var curFrag: CurrentShowFragment? = null
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // Инфлейтинг разметки фрагмента
         val binding = FragmentSpacePhotoBinding.inflate(inflater, container, false)
-        val uri = arguments?.uriArg
+        val uri = arguments?.uriArg // Получение URI из аргументов
 
+        // Загрузка изображения с помощью Glide
         Glide.with(binding.viewSpaceFoto)
             .load(uri)
-            .error(R.drawable.err_load)
+            .error(R.drawable.err_load) // Установка изображения по умолчанию в случае ошибки
             .into(binding.viewSpaceFoto)
 
         return binding.root
     }
 
-    private var curFrag: CurrentShowFragment? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            curFrag = context as CurrentShowFragment
+            curFrag = context as CurrentShowFragment // Привязка к текущему контексту
         } catch (e: ClassCastException) {
-            throw UnknownError
+            throw UnknownError // Обработка ошибки привязки
         }
     }
 
     override fun onDetach() {
         super.onDetach()
-        curFrag?.getCurFragmentDetach()
+        curFrag?.getCurFragmentDetach() // Уведомление о отсоединении
         curFrag = null
     }
 
     override fun onStart() {
         super.onStart()
-        curFrag?.getCurFragmentAttach("Pic")
-
+        curFrag?.getCurFragmentAttach("Pic") // Уведомление о присоединении фрагмента
     }
 }

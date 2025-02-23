@@ -21,70 +21,76 @@ import ru.netology.nework.viewmodel.AuthViewModel
 class AuthFragment : Fragment() {
 
     private val viewModel: AuthViewModel by viewModels()
+    private var binding: AuthFragmentBinding? = null
     private var pressBtn = false
+    private var curFrag: CurrentShowFragment? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = AuthFragmentBinding.inflate(layoutInflater)
+        binding = AuthFragmentBinding.inflate(inflater, container, false)
 
-        fun showBar(txt: String) {
-            Snackbar.make(
-                binding.root,
-                txt,
-                Snackbar.LENGTH_LONG
-            ).show()
+        viewModel.authState.value?.let {
+            binding?.fieldLogin?.editText?.setText(it.login)
+            binding?.fieldPass?.editText?.setText(it.pass)
         }
 
-        with(binding) {
-            viewModel.authState.value?.let {
-                fieldLogin.editText?.setText(it.login)
-                fieldPass.editText?.setText(it.pass)
-            }
-            btnSignIn.setOnClickListener {
-                if (
-                    fieldLogin.editText?.text?.isEmpty() == true ||
-                    fieldPass.editText?.text?.isEmpty() == true
-                ) {
-                    showBar("Все поля должны быть заполнены!")
-                } else {
-                    pressBtn = true
-                    val login = fieldLogin.editText?.text.toString()
-                    val pass = fieldPass.editText?.text.toString()
-                    viewModel.getAuthFromServer(login, pass)
-                }
+        binding?.btnSignIn?.setOnClickListener {
+            if (binding?.fieldLogin?.editText?.text.isNullOrEmpty() ||
+                binding?.fieldPass?.editText?.text.isNullOrEmpty()
+            ) {
+                showSnackbar("Все поля должны быть заполнены!")
+            } else {
+                pressBtn = true
+                val login = binding?.fieldLogin?.editText?.text.toString()
+                val pass = binding?.fieldPass?.editText?.text.toString()
+                viewModel.getAuthFromServer(login, pass)
             }
         }
 
+        observeViewModel()
+
+        return binding!!.root
+    }
+
+    private fun showSnackbar(message: String) {
+        Snackbar.make(binding!!.root, message, Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun observeViewModel() {
         viewModel.authState.observe(viewLifecycleOwner) { auth ->
             if (pressBtn) {
                 if (auth.login != null && auth.pass != null) {
                     findNavController().popBackStack()
                 } else {
                     AuthViewModel.userAuth = false
-                    showBar("Такого пользователя нет!")
+                    showSnackbar("Такого пользователя нет!")
                 }
             }
         }
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             if (AuthViewModel.userAuth) {
-                showBar("Выполнен вход в аккаунт")
+                showSnackbar("Выполнен вход в аккаунт")
                 findNavController().navigateUp()
             }
             if (state is FeedModelState.State) {
-                if (state.error400) showBar("Неправильный пароль!")
-                if (state.error404) showBar("Пользователь не зарегистрирован!")
-                if (state.error) showBar("Проверьте ваше подключение к сети!")
-                binding.statusAuth.isVisible = state.loading
+                when {
+                    state.error400 -> showSnackbar("Неправильный пароль!")
+                    state.error404 -> showSnackbar("Пользователь не зарегистрирован!")
+                    state.error -> showSnackbar("Проверьте ваше подключение к сети!")
+                }
+                binding?.statusAuth?.isVisible = state.loading
             }
         }
-        return binding.root
     }
 
-    private var curFrag: CurrentShowFragment? = null
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null // Зануляем binding для предотвращения утечек памяти
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
