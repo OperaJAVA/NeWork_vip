@@ -49,6 +49,7 @@ class ScreenUsers : Fragment() {
                 )
             }
 
+
             override fun addUser(idUser: Long?) {
                 // Реализация добавления пользователя
             }
@@ -78,9 +79,11 @@ class ScreenUsers : Fragment() {
                         .setAction(R.string.retry_loading) { viewModel.loadUsers() }
                         .show()
                 }
+
                 is FeedModelState.Unauthorized -> {
                     showBar("Доступ закрыт, выполните вход")
                 }
+
                 else -> {}
             }
         }
@@ -104,16 +107,23 @@ class ScreenUsers : Fragment() {
                     findNavController().navigate(R.id.screenPosts)
                     true
                 }
+
                 R.id.menu_events -> {
                     findNavController().navigate(R.id.screenEvents)
                     true
                 }
+
                 R.id.menu_users -> true
                 else -> false
             }
         }
 
         return binding?.root!!
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null // Зануляем binding для предотвращения утечек памяти
     }
 
     override fun onResume() {

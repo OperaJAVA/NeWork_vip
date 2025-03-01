@@ -9,8 +9,8 @@
             app:showAsAction="never" />
         <item
             android:id="@+id/signup"
-            android:title="@string/sign_up"
             android:contentDescription="@string/user_name"
+            android:title="@string/sign_up"
             app:showAsAction="never" />
 
     </group>

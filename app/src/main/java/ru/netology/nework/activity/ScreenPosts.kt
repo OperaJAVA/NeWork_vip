@@ -56,6 +56,11 @@ class ScreenPosts : Fragment() {
             ).show()
         }
 
+        fun onDestroyView() {
+            super.onDestroyView()
+            binding = null // Зануляем binding для предотвращения утечек памяти
+        }
+
         val adapter = AdapterScreenPosts(object : OnIteractionListener {
             override fun onLike(post: Post) {
                 if (userAuth) {
@@ -63,7 +68,7 @@ class ScreenPosts : Fragment() {
                 } else {
                     DialogAuth.newInstance(
                         DIALOG_IN,
-                        "Для установки лайков нужно авторизоваться"
+                        getString(R.string.auth_required_for_likes)
                     )
                         .show(childFragmentManager, "TAG")
                 }
@@ -136,42 +141,54 @@ class ScreenPosts : Fragment() {
         }
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
-            binding?.progress?.isVisible = state is FeedModelState.Loading // Проверка на состояние загрузки
-            binding?.swipeRefreshLayout?.isRefreshing = state is FeedModelState.Refreshing // Проверка на состояние обновления
+            binding?.progress?.isVisible =
+                state is FeedModelState.Loading // Проверка на состояние загрузки
+            binding?.swipeRefreshLayout?.isRefreshing =
+                state is FeedModelState.Refreshing // Проверка на состояние обновления
 
             when (state) {
                 is FeedModelState.Unauthorized -> {
                     userAuth = false
                     myID = null
-                    showBar("Ошибка авторизации, выполните вход")
+                    showBar(getString(R.string.auth_error))
                 }
+
                 is FeedModelState.UnsupportedMediaType -> {
-                    showBar("Неправильный формат файла!")
+                    showBar(getString(R.string.unsupported_media_type_error))
                 }
+
                 is FeedModelState.Error -> {
-                    showBar("Произошла ошибка!")
+                    showBar(getString(R.string.general_error))
                 }
+
                 is FeedModelState.NetworkError -> {
-                    showBar("Ошибка сети!")
+                    showBar(getString(R.string.network_error))
                 }
+
                 is FeedModelState.NotFound -> {
-                    showBar("Запись не найдена!")
+                    showBar(getString(R.string.not_found_error))
                 }
+
                 is FeedModelState.BadRequest -> {
-                    showBar("Неправильный запрос!")
+                    showBar(getString(R.string.bad_request_error))
                 }
+
                 is FeedModelState.Loading -> {
                     // Можно добавить дополнительную логику, если необходимо
                 }
+
                 is FeedModelState.Refreshing -> {
                     // Можно добавить дополнительную логику, если необходимо
                 }
+
                 is FeedModelState.AuthStatus -> {
                     // Можно добавить дополнительную логику, если необходимо
                 }
+
                 is FeedModelState.Success<*> -> {
                     // Можно добавить дополнительную логику, если необходимо
                 }
+
                 is FeedModelState.State -> {
                     // Можно добавить дополнительную логику, если необходимо
                 }
@@ -226,7 +243,7 @@ class ScreenPosts : Fragment() {
             } else {
                 DialogAuth.newInstance(
                     DIALOG_IN,
-                    "Для добавления поста нужно авторизоваться"
+                    getString(R.string.auth_required_for_post_creation)
                 )
                     .show(childFragmentManager, "TAG")
             }

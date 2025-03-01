@@ -55,9 +55,11 @@ class AuthViewModel @Inject constructor(
                     is ru.netology.nework.error.ApiError403 -> {
                         _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
+
                     is ru.netology.nework.error.ApiError415 -> {
                         _dataState.value = FeedModelState.UnsupportedMediaType // Ошибка 415
                     }
+
                     else -> {
                         _dataState.value = FeedModelState.Error // Общая ошибка
                     }
@@ -87,9 +89,11 @@ class AuthViewModel @Inject constructor(
                     is ru.netology.nework.error.ApiError400 -> {
                         _dataState.value = FeedModelState.BadRequest // Ошибка 400
                     }
+
                     is ru.netology.nework.error.ApiError404 -> {
                         _dataState.value = FeedModelState.NotFound // Не найдено
                     }
+
                     else -> {
                         _dataState.value = FeedModelState.Error // Общая ошибка
                     }

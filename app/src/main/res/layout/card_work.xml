@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/min_space"
-         app:cardElevation="5dp">
+        app:cardElevation="5dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -34,9 +34,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/common_spacing"
                 android:contentDescription="@string/button_clear_job"
+                android:src="@drawable/trash_24"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src = "@drawable/trash_24" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/experience"
@@ -44,8 +44,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/common_spacing"
                 android:textSize="@dimen/button_text"
-                app:layout_constraintTop_toBottomOf="@id/company_name"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/company_name"
                 tools:text="@string/experience" />
 
             <TextView
@@ -64,10 +64,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/common_spacing"
                 android:autoLink="web"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/job_title"
                 android:textColor="@color/design_default_color_primary"
                 android:textSize="@dimen/button_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/job_title"
                 tools:text="@string/link" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

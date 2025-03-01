@@ -1,4 +1,5 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="need_auth_error">To add to the list of participants you need to log in</string>
     <string name="app_name">NeWork</string>
     <string name="description_post_like">Like</string>
     <string name="description_post_share">Share</string>
@@ -70,7 +71,7 @@
     <string name="job_title">Job title</string>
     <string name="experience">Experience</string>
     <string name="enter_dates">ENTER DATES</string>
-    <string name="ok">Ok</string>
+    <string name="ok" tools:ignore="ButtonCase">Ok</string>
     <string name="cancel">Cancel</string>
     <string name="transparent">Transparent lay</string>
     <string name="description_event_participants">Participants</string>
@@ -92,5 +93,31 @@
     <string name="date_time_required">Date and time of the event is required!</string>
     <string name="file_size_exceeded">Attachment size exceeds the maximum allowed 15MB!</string>
     <string name="invalid_file_format">Invalid file format, please upload an audio file!</string>
+    <string name="error_empty_fields" />
+    <string name="error_user_not_found" />
+    <string name="login_success" />
+    <string name="error_incorrect_password" />
+    <string name="error_user_not_registered" />
+    <string name="error_check_connection" />
+    <string name="error_occurred" />
+    <string name="error_bad_request" />
+    <string name="error_unauthorized" />
+    <string name="error_not_found" />
+    <string name="error_password_mismatch" />
+    <string name="error_photo_required" />
+    <string name="auth_required_for_likes" />
+    <string name="auth_required_for_participation" />
+    <string name="auth_error" />
+    <string name="general_error" />
+    <string name="auth_required_for_event_creation" />
+    <string name="unsupported_media_type_error" />
+    <string name="network_error" />
+    <string name="not_found_error" />
+    <string name="bad_request_error" />
+    <string name="auth_required_for_post_creation" />
+    <string name="marker_set_success" />
+    <string name="map_initialization_error" />
+    <string name="remove_job_header" />
+    <string name="remove_job_info" />
 
 </resources>

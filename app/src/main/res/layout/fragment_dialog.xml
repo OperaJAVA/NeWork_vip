@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/frag_dialog"
-        android:layout_width="match_parent"
+    android:id="@+id/frag_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/common_spacing">
+
+    <TextView
+        android:id="@+id/text_dialog"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="vertical"
+        android:layout_marginStart="@dimen/common_spacing"
+        android:layout_marginTop="@dimen/common_spacing"
+        android:layout_marginEnd="@dimen/common_spacing"
+        android:textSize="18sp"
+        tools:text="@tools:sample/lorem[10]" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_spacing"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
         android:padding="@dimen/common_spacing">
 
-        <TextView
-            android:id="@+id/text_dialog"
+        <Button
+            android:id="@+id/btn_signin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/common_spacing"
-            android:layout_marginStart="@dimen/common_spacing"
             android:layout_marginEnd="@dimen/common_spacing"
-            android:textSize="18sp"
-            tools:text="@tools:sample/lorem[10]" />
+            android:minWidth="100dp"
+            android:text="@string/sign_in"
+            android:textSize="12sp"
+            tools:ignore="ButtonStyle" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btn_signup"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/common_spacing"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:padding="@dimen/common_spacing">
-
-            <Button
-                android:id="@+id/btn_signin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginEnd="@dimen/common_spacing"
-                tools:ignore="ButtonStyle"
-                android:minWidth="100dp"
-                android:textSize="12sp"
-                android:text="@string/sign_in" />
-
-            <Button
-                android:id="@+id/btn_signup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                tools:ignore="ButtonStyle"
-                android:layout_marginStart="@dimen/common_spacing"
-                android:minWidth="100dp"
-                android:textSize="12sp"
-                android:text="@string/sign_up" />
-        </LinearLayout>
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/common_spacing"
+            android:minWidth="100dp"
+            android:text="@string/sign_up"
+            android:textSize="12sp"
+            tools:ignore="ButtonStyle" />
     </LinearLayout>
+</LinearLayout>
 

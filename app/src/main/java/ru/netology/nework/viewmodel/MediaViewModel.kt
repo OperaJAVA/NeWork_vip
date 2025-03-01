@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import ru.netology.nework.players.MPlayer
 import ru.netology.nework.util.AndroidUtils
 
-class MediaViewModel: ViewModel() {
+class MediaViewModel : ViewModel() {
     private val _player = MutableLiveData(MPlayer())
 
     private val _duration = MutableLiveData(String())
@@ -17,7 +17,7 @@ class MediaViewModel: ViewModel() {
         get() = _duration
 
     fun playAudio(track: String) {
-        _player.value?.play(track, object : MPlayer.GetInfo{
+        _player.value?.play(track, object : MPlayer.GetInfo {
             override fun getDuration(dut: Int) {
                 _duration.value = AndroidUtils.getTimeTrack(dut)
             }
@@ -29,7 +29,7 @@ class MediaViewModel: ViewModel() {
         })
     }
 
-    fun playVideo(url: String, view: VideoView){
+    fun playVideo(url: String, view: VideoView) {
         view.apply {
             setMediaController(MediaController(context))
             setVideoURI(
@@ -45,7 +45,7 @@ class MediaViewModel: ViewModel() {
         _player.value?.pausePlayer()
     }
 
-    fun stopAudio(){
+    fun stopAudio() {
         _player.value?.stopPlayer()
     }
 }

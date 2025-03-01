@@ -8,39 +8,38 @@
         android:id="@+id/screenPosts"
         android:name="ru.netology.nework.activity.ScreenPosts"
         android:label="ScreenPosts"
-        tools:layout="@layout/screen_posts"/>
+        tools:layout="@layout/screen_posts" />
     <dialog
         android:id="@+id/dialogAuth"
         android:name="ru.netology.nework.dialog.DialogAuth"
         android:label="DialogAuth"
-        tools:layout="@layout/fragment_dialog"/>
+        tools:layout="@layout/fragment_dialog" />
     <fragment
         android:id="@+id/authFragment"
         android:name="ru.netology.nework.activity.AuthFragment"
         android:label="AuthFragment"
-        tools:layout="@layout/auth_fragment"
-        />
+        tools:layout="@layout/auth_fragment" />
 
     <fragment
         android:id="@+id/userAccount"
         android:name="ru.netology.nework.activity.UserAccount"
         android:label="UserAccount"
-        tools:layout="@layout/user_account"/>
+        tools:layout="@layout/user_account" />
     <fragment
         android:id="@+id/regFragment"
         android:name="ru.netology.nework.activity.RegFragment"
         android:label="RegFragment"
-        tools:layout="@layout/reg_fragment"/>
+        tools:layout="@layout/reg_fragment" />
     <fragment
         android:id="@+id/postView"
         android:name="ru.netology.nework.activity.PostView"
         android:label="PostView"
-        tools:layout="@layout/post_view"/>
+        tools:layout="@layout/post_view" />
     <fragment
         android:id="@+id/screenUsers"
         android:name="ru.netology.nework.activity.ScreenUsers"
         android:label="ScreenUsers"
-        tools:layout="@layout/screen_users"/>
+        tools:layout="@layout/screen_users" />
     <fragment
         android:id="@+id/newPostFrag"
         android:name="ru.netology.nework.activity.NewPostFrag"
@@ -65,15 +64,15 @@
         android:id="@+id/eventView"
         android:name="ru.netology.nework.activity.EventView"
         android:label="EventView"
-        tools:layout="@layout/event_view"/>
+        tools:layout="@layout/event_view" />
     <fragment
         android:id="@+id/newEvent"
         android:name="ru.netology.nework.activity.NewEvent"
         android:label="NewEvent"
-        tools:layout="@layout/new_event"/>
+        tools:layout="@layout/new_event" />
     <fragment
         android:id="@+id/newJob"
         android:name="ru.netology.nework.activity.NewJob"
         android:label="NewJob"
-        tools:layout="@layout/new_job"/>
+        tools:layout="@layout/new_job" />
 </navigation>

@@ -19,9 +19,9 @@ interface PostsRepository {
 
     suspend fun userAuth(login: String, pass: String): User?
     suspend fun userReg(login: String, pass: String, name: String, upload: MediaUpload): User?
-    suspend fun savePost(post: Post)
 
     suspend fun upload(media: MultipartBody.Part): Media
-    suspend fun deletePost(post: Post)
     suspend fun signOut()
+    suspend fun savePost(post: Post)
+    suspend fun deletePost(post: Post)
 }

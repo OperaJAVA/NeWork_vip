@@ -55,6 +55,7 @@ class UsersViewModel @Inject constructor(
                     is ru.netology.nework.error.ApiError403 -> {
                         _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
+
                     else -> {
                         _dataState.value = FeedModelState.Error // Общая ошибка
                     }
@@ -74,6 +75,7 @@ class UsersViewModel @Inject constructor(
                     is ru.netology.nework.error.ApiError403 -> {
                         _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
+
                     else -> {
                         _dataState.value = FeedModelState.Error // Общая ошибка
                     }
@@ -93,6 +95,7 @@ class UsersViewModel @Inject constructor(
                     is ru.netology.nework.error.ApiError404 -> {
                         _dataState.value = FeedModelState.NotFound // Не найдено
                     }
+
                     else -> {
                         _dataState.value = FeedModelState.Error // Общая ошибка
                     }
@@ -112,12 +115,15 @@ class UsersViewModel @Inject constructor(
                     is ru.netology.nework.error.ApiError403 -> {
                         _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
+
                     is ru.netology.nework.error.ApiError404 -> {
                         _dataState.value = FeedModelState.NotFound // Не найдено
                     }
+
                     is ru.netology.nework.error.ApiError400 -> {
                         _dataState.value = FeedModelState.BadRequest // Ошибка 400
                     }
+
                     else -> {
                         _dataState.value = FeedModelState.Error // Общая ошибка
                     }
@@ -138,12 +144,15 @@ class UsersViewModel @Inject constructor(
                     is ru.netology.nework.error.ApiError403 -> {
                         _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
+
                     is ru.netology.nework.error.ApiError404 -> {
                         _dataState.value = FeedModelState.NotFound // Не найдено
                     }
+
                     is ru.netology.nework.error.NetworkError -> {
                         // Обработка сетевой ошибки
                     }
+
                     else -> {
                         _dataState.value = FeedModelState.Error // Общая ошибка
                     }

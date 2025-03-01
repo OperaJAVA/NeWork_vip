@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.NeWork" parent="Theme.MaterialComponents.DayNight">
         <!-- Customize your dark theme here. -->
-<!--        Theme.Material3.DayNight"-->
+        <!--        Theme.Material3.DayNight"-->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="colorPrimary">#714Cff</item>
     </style>

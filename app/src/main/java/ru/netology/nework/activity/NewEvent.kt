@@ -153,57 +153,69 @@ class NewEvent : Fragment() {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_save, menu)
             }
-// 23.02.2025
-override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
-    when (menuItem.itemId) {
-        R.id.save -> {
-            var multiPart: MultipartBody.Part? = null
-            if (viewModelLays.newStatusViewsModel.value?.groupUsers == SHOW) {
-                viewModelLays.setUsersGroup()
-            } else {
-                // Обработка типа медиафайла
-                viewModelLays.mediaFile.value?.type?.let { type ->
-                    when {
-                        type.contains(Regex("audio/")) -> viewModelLays.setTypeAttach(AttachmentType.AUDIO)
-                        type.contains(Regex("video/")) -> viewModelLays.setTypeAttach(AttachmentType.VIDEO)
+
+            // 23.02.2025
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+                when (menuItem.itemId) {
+                    R.id.save -> {
+                        var multiPart: MultipartBody.Part? = null
+                        if (viewModelLays.newStatusViewsModel.value?.groupUsers == SHOW) {
+                            viewModelLays.setUsersGroup()
+                        } else {
+                            // Обработка типа медиафайла
+                            viewModelLays.mediaFile.value?.type?.let { type ->
+                                when {
+                                    type.contains(Regex("audio/")) -> viewModelLays.setTypeAttach(
+                                        AttachmentType.AUDIO
+                                    )
+
+                                    type.contains(Regex("video/")) -> viewModelLays.setTypeAttach(
+                                        AttachmentType.VIDEO
+                                    )
+                                }
+                                println("MULTI $type")
+                                multiPart = uploadStream(viewModelLays.mediaFile.value!!)
+                            }
+
+                            // Обработка изображений
+                            if (viewModelLays.typeAttach.value == AttachmentType.IMAGE && viewModelLays.photo.value?.file != null) {
+                                val photoModel = viewModelLays.photo.value
+                                multiPart = MultipartBody.Part.createFormData(
+                                    "file",
+                                    photoModel?.file?.name,
+                                    photoModel?.file!!.asRequestBody()
+                                )
+                            }
+
+                            if (viewModelLays.typeAttach.value == null) {
+                                viewModelLays.cleanAttach()
+                                println("Attach Null")
+                            }
+
+                            val text = binding.content.text.toString()
+                            val event = viewModelLays.getEvent(text)
+
+                            // Проверка на наличие даты и времени
+                            if (event?.datetime == null) {
+                                requireContext().toast(getString(R.string.date_time_required)) // Изменения здесь
+                            } else {
+                                viewModelEvent.saveEvent(
+                                    event,
+                                    multiPart,
+                                    viewModelLays.typeAttach.value
+                                )
+                            }
+                        }
+                        true
                     }
-                    println("MULTI $type")
-                    multiPart = uploadStream(viewModelLays.mediaFile.value!!)
-                }
 
-                // Обработка изображений
-                if (viewModelLays.typeAttach.value == AttachmentType.IMAGE && viewModelLays.photo.value?.file != null) {
-                    val photoModel = viewModelLays.photo.value
-                    multiPart = MultipartBody.Part.createFormData(
-                        "file",
-                        photoModel?.file?.name,
-                        photoModel?.file!!.asRequestBody()
-                    )
-                }
+                    android.R.id.home -> {
+                        findNavController().navigateUp()
+                        true
+                    }
 
-                if (viewModelLays.typeAttach.value == null) {
-                    viewModelLays.cleanAttach()
-                    println("Attach Null")
+                    else -> false
                 }
-
-                val text = binding.content.text.toString()
-                val event = viewModelLays.getEvent(text)
-
-                // Проверка на наличие даты и времени
-                if (event?.datetime == null) {
-                    requireContext().toast(getString(R.string.date_time_required)) // Изменения здесь
-                } else {
-                    viewModelEvent.saveEvent(event, multiPart, viewModelLays.typeAttach.value)
-                }
-            }
-            true
-        }
-        android.R.id.home -> {
-            findNavController().navigateUp()
-            true
-        }
-        else -> false
-    }
         }, viewLifecycleOwner)
 
         val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

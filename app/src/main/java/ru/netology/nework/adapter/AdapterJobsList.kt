@@ -12,14 +12,14 @@ import ru.netology.nework.util.AndroidUtils.getTimeJob
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.myID
 
 interface ListenerSelectionJobs {
-fun removeJob(job: Job)
+    fun removeJob(job: Job)
 }
 
 class AdapterJobsList(
     private val listenerSelectionJobs: ListenerSelectionJobs,
-): ListAdapter<Job, JobViewHolder>(JobDiffCallback()) {
+) : ListAdapter<Job, JobViewHolder>(JobDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobViewHolder {
-        val binding = CardWorkBinding.inflate(LayoutInflater.from(parent.context), parent, false )
+        val binding = CardWorkBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return JobViewHolder(binding, listenerSelectionJobs)
     }
 
@@ -32,8 +32,8 @@ class AdapterJobsList(
 class JobViewHolder(
     private val binding: CardWorkBinding,
     private val listenerSelectionJobs: ListenerSelectionJobs,
-): RecyclerView.ViewHolder(binding.root) {
-    fun bind(job: Job){
+) : RecyclerView.ViewHolder(binding.root) {
+    fun bind(job: Job) {
         binding.apply {
             companyName.text = job.name
             val startJob = getTimeJob(job.start)
@@ -41,16 +41,16 @@ class JobViewHolder(
             "$startJob - $finishJob".also { experience.text = it }
             jobTitle.text = job.position
             jobLink.text = job.link
-            if(myID == job.idUser) trash.visibility = View.VISIBLE
+            if (myID == job.idUser) trash.visibility = View.VISIBLE
             else trash.visibility = View.GONE
-            trash.setOnClickListener{
+            trash.setOnClickListener {
                 listenerSelectionJobs.removeJob(job)
             }
         }
     }
 }
 
-class JobDiffCallback: DiffUtil.ItemCallback<Job>() {
+class JobDiffCallback : DiffUtil.ItemCallback<Job>() {
     override fun areItemsTheSame(oldItem: Job, newItem: Job): Boolean =
         oldItem.id == newItem.id
 

@@ -35,7 +35,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 
 @AndroidEntryPoint
-class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShowFragment, ListenerDialogSelectDate {
+class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShowFragment,
+    ListenerDialogSelectDate {
 
     private var actionBar: ActionBar? = null
     private var imageView: ImageView? = null
@@ -66,7 +67,10 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShow
             setImageResource(R.drawable.icon_person_24)
         }
 
-        val lp = ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT).apply {
+        val lp = ActionBar.LayoutParams(
+            ActionBar.LayoutParams.WRAP_CONTENT,
+            ActionBar.LayoutParams.WRAP_CONTENT
+        ).apply {
             gravity = Gravity.END
         }
 
@@ -99,24 +103,30 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShow
                 findNavController(R.id.nav_host_fragment).navigate(R.id.authFragment)
                 true
             }
+
             R.id.signup -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.regFragment)
                 true
             }
+
             R.id.signout -> {
                 DialogAuth.newInstance(DIALOG_OUT, getString(R.string.logout_confirmation))
                     .show(supportFragmentManager, null)
                 true
             }
+
             R.id.account -> {
                 if (userAuth) {
                     val myAcc = viewModel.getMyAcc()
-                    findNavController(R.id.nav_host_fragment).navigate(R.id.userAccount, Bundle().apply {
-                        userArg = myAcc
-                    })
+                    findNavController(R.id.nav_host_fragment).navigate(
+                        R.id.userAccount,
+                        Bundle().apply {
+                            userArg = myAcc
+                        })
                 }
                 true
             }
+
             else -> false
         }
     }
@@ -125,11 +135,17 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShow
         when (select) {
             DIALOG_OUT -> {
                 viewModel.deleteAuth()
-                Toast.makeText(this@AppActivity, getString(R.string.logout_message), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this@AppActivity,
+                    getString(R.string.logout_message),
+                    Toast.LENGTH_LONG
+                ).show()
             }
+
             DIALOG_IN -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.authFragment)
             }
+
             DIALOG_REG -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.regFragment)
             }

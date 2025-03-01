@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import ru.netology.nework.R
 import ru.netology.nework.databinding.NewJobBinding
 import ru.netology.nework.date.DateJob
 import ru.netology.nework.dialog.DialogSelectRemoveJob
@@ -20,7 +21,6 @@ import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.util.AndroidUtils.getTimeJob
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.myID
 import ru.netology.nework.viewmodel.UsersViewModel
-
 
 @Suppress("UNREACHABLE_CODE")
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -61,7 +61,7 @@ class NewJob : Fragment() {
                         fieldName.editText?.text?.isEmpty() == true ||
                         fieldPosition.editText?.text?.isEmpty() == true
                     ) {
-                        showBar("Поля имя и должность должны быть заполнены!")
+                        showBar(getString(R.string.error_empty_fields))
                     } else {
                         val name = fieldName.editText?.text.toString()
                         val position = fieldPosition.editText?.text.toString()
@@ -82,22 +82,22 @@ class NewJob : Fragment() {
 
                 is FeedModelState.Error -> {
                     binding?.progressLoad?.isVisible = false
-                    showBar("Произошла ошибка!")
+                    showBar(getString(R.string.error_occurred))
                 }
 
                 is FeedModelState.BadRequest -> {
                     binding?.progressLoad?.isVisible = false
-                    showBar("Не указана дата или некорректно введены данные!")
+                    showBar(getString(R.string.error_bad_request))
                 }
 
                 is FeedModelState.Unauthorized -> {
                     binding?.progressLoad?.isVisible = false
-                    showBar("Ошибка авторизации, отказано в доступе!")
+                    showBar(getString(R.string.error_unauthorized))
                 }
 
                 is FeedModelState.NotFound -> {
                     binding?.progressLoad?.isVisible = false
-                    showBar("Запись не найдена!")
+                    showBar(getString(R.string.error_not_found))
                 }
                 // Можно добавить обработку других состояний, если они есть
                 is FeedModelState.Success<*> -> {
@@ -119,10 +119,16 @@ class NewJob : Fragment() {
 
         return binding!!.root
     }
-        @SuppressLint("SetTextI18n")
-        fun getDateJob(date: DateJob) {
-            startDate = date.dateStart
-            finishDate = date.dateEnd
-            binding?.dateJob?.text = "${getTimeJob(startDate)} - ${getTimeJob(finishDate)}"
-        }
+
+    @SuppressLint("SetTextI18n")
+    fun getDateJob(date: DateJob) {
+        startDate = date.dateStart
+        finishDate = date.dateEnd
+        binding?.dateJob?.text = "${getTimeJob(startDate)} - ${getTimeJob(finishDate)}"
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null // Зануляем binding для предотвращения утечек памяти
+    }
+}

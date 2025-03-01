@@ -1,6 +1,7 @@
 package ru.netology.nework.adapter
 
 import android.content.Context
+import android.widget.Toast
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
@@ -20,7 +21,7 @@ class YaKit @Inject constructor(
     @ApplicationContext
     private val context: Context
 ) {
-    companion object YKit {
+    companion object {
         var mapView: MapView? = null
         var yandexMapsKitFactory: MapKit? = null
         lateinit var mapObjectCollection: MapObjectCollection
@@ -28,11 +29,14 @@ class YaKit @Inject constructor(
         var zoomValue: Float = 16.5f
     }
 
-    fun initMapView(view: MapView){
+    fun initMapView(view: MapView) {
         mapView = view
         yandexMapsKitFactory = MapKitFactory.getInstance()
         yandexMapsKitFactory?.onStart()
         mapView?.onStart()
+
+        // Пример использования Toast для отображения сообщения
+        Toast.makeText(context, R.string.map_initialization_error, Toast.LENGTH_SHORT).show()
     }
 
     @Suppress("DEPRECATION")
@@ -47,21 +51,23 @@ class YaKit @Inject constructor(
     @Suppress("DEPRECATION")
     fun setMarkerInStartLocation(startLocation: Point) {
         val marker = R.drawable.ic_pin_black_png // Добавляем ссылку на картинку
-        mapObjectCollection =
-            mapView?.map!!.mapObjects // Инициализируем коллекцию различных объектов на карте
+        mapObjectCollection = mapView?.map!!.mapObjects // Инициализируем коллекцию различных объектов на карте
         placemarkMapObject = mapObjectCollection.addPlacemark(
             startLocation,
             ImageProvider.fromResource(context, marker)
         ) // Добавляем метку со значком
         placemarkMapObject.opacity = 0.5f // Устанавливаем прозрачность метке
         placemarkMapObject.setText("Здесь!") // Устанавливаем текст сверху метки
+
+        // Пример использования Toast для отображения сообщения
+        Toast.makeText(context, R.string.marker_set_success, Toast.LENGTH_SHORT).show()
     }
 
-    fun cleanMapObject(){
+    fun cleanMapObject() {
         mapObjectCollection.clear()
     }
 
-    fun stopMapView(){
+    fun stopMapView() {
         mapView?.onStop()
         MapKitFactory.getInstance()?.onStop()
     }

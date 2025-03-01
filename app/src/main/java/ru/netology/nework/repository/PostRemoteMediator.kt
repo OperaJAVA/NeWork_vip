@@ -32,7 +32,6 @@ class PostRemoteMediator @Inject constructor(
         try {
             val response = when (loadType) {
                 LoadType.REFRESH -> {
-//                    println("REFRESH  postRemoteKeyDao.min() ${postRemoteKeyDao.min()}  postRemoteKeyDao.max() ${postRemoteKeyDao.max()}")
                     val id = postRemoteKeyDao.max()
                     if (id == null) {
                         service.getPostsLatest(state.config.initialLoadSize)

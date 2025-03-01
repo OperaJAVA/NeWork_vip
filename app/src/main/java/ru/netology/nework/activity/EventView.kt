@@ -9,6 +9,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -102,7 +103,7 @@ class EventView : Fragment() {
         if (AuthViewModel.userAuth) {
             viewModelEvents.likeEvent(event, !(event.likedByMe ?: false))
         } else {
-            showAuthDialog("Для установки лайков нужно авторизоваться")
+            showAuthDialog()
         }
     }
 
@@ -137,13 +138,24 @@ class EventView : Fragment() {
         if (AuthViewModel.userAuth) {
             viewModelEvents.participateEvent(event, !(event.participatedByMe ?: false))
         } else {
-            showAuthDialog("Для добавления в список участников нужно авторизоваться")
+            showAuthDialog()
         }
     }
 
-    private fun showAuthDialog(message: String) {
-        DialogAuth.newInstance(AuthViewModel.DIALOG_IN, message)
-            .show(childFragmentManager, "TAG")
+    private fun showAuthDialog() {
+        fun handleParticipationEvent(event: Event) {
+            if (AuthViewModel.userAuth) {
+                viewModelEvents.participateEvent(event, event.participatedByMe != true)
+            } else {
+                showAuthDialog(R.string.need_auth_error)
+            }
+        }
+
+    }
+
+    private fun showAuthDialog(@StringRes message: Int) {
+        DialogAuth.newInstance(AuthViewModel.DIALOG_IN, getString(message))
+            .show(childFragmentManager, null) // тег вы всё равно не используете
     }
 
     private fun observeViewModels() {
@@ -168,11 +180,13 @@ class EventView : Fragment() {
                         shareEvent()
                         true
                     }
+
                     android.R.id.home -> {
                         viewModelMedia.stopAudio()
                         findNavController().navigateUp()
                         true
                     }
+
                     else -> false
                 }
         }, viewLifecycleOwner)
@@ -199,6 +213,11 @@ class EventView : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         curFrag = context as? CurrentShowFragment ?: throw UnknownError
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null // Зануляем binding для предотвращения утечек памяти
     }
 
     override fun onDetach() {

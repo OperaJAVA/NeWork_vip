@@ -24,4 +24,3 @@ class ApiError415(code: String) : AppError(code)
 data object NetworkError : AppError("error_network")
 data object DbError : AppError("error_db")
 data object UnknownError : AppError("error_unknown")
-

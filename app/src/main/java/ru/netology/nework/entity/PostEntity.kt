@@ -28,7 +28,6 @@ data class PostEntity(
     val attachment: Attachment?,
     @Embedded
     val coords: Coordinates? = null,
-//    @Embedded
     val users: Map<String, UserPreview>?,
     val postOwner: Boolean,
 ) {

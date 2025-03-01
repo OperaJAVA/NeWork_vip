@@ -63,20 +63,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_spacing"
-            android:textSize="24sp"
-            android:gravity="center"
             android:background="#55555555"
+            android:gravity="center"
             android:text="@string/enter_dates"
-            />
-
+            android:textSize="24sp" />
 
 
         <Button
             android:id="@+id/btn_create"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/common_spacing"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/common_spacing"
             android:layout_marginBottom="@dimen/common_spacing"
             android:text="@string/add" />
 

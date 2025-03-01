@@ -16,8 +16,6 @@ import javax.inject.Inject
 
 interface OnIteractionListenerPostView {
     fun onLike(post: Post)
-    fun onEdit(post: Post)
-    fun onRemove(post: Post)
     fun playAudio(link: String)
     fun playVideo(link: String)
     fun openSpacePhoto(post: Post)

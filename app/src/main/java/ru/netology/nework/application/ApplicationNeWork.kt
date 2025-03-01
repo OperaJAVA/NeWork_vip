@@ -6,7 +6,7 @@ import dagger.hilt.android.HiltAndroidApp
 import ru.netology.nework.BuildConfig
 
 @HiltAndroidApp
-class ApplicationNeWork: Application() {
+class ApplicationNeWork : Application() {
     init {
         MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY)
     }

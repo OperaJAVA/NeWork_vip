@@ -12,6 +12,6 @@
         android:id="@+id/view_space_foto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:srcCompat="@tools:sample/avatars[3]"/>
+        tools:srcCompat="@tools:sample/avatars[3]" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,7 +19,7 @@ import kotlin.reflect.KProperty
 object AndroidUtils {
 
     fun getTimePublish(str: String?): String {
-        str?.let{
+        str?.let {
             try {
                 val yyyy = it.subSequence(0, 4)
                 val mm = it.subSequence(5, 7)
@@ -34,8 +34,8 @@ object AndroidUtils {
         return " "
     }
 
-    fun getTimeJob(str: String?): String{
-        str?.let{
+    fun getTimeJob(str: String?): String {
+        str?.let {
             try {
                 val yyyy = it.subSequence(0, 4)
                 val mm = it.subSequence(5, 7)
@@ -83,9 +83,11 @@ object AndroidUtils {
     @SuppressLint("SimpleDateFormat")
     fun getDate(): String =
         SimpleDateFormat("dd MMMM yyyy").format(Calendar.getInstance().time).toString()
+
     @SuppressLint("SimpleDateFormat")
     fun getDate(date: Calendar): String =
         SimpleDateFormat("dd MMMM yyyy").format(date.time).toString()
+
     @SuppressLint("SimpleDateFormat")
     fun getTimeFormat(date: Calendar): String =
         SimpleDateFormat("yyyy-MM-dd HH:mm").format(date.time).toString()

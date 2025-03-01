@@ -67,18 +67,11 @@ class PostView : Fragment() {
                     } else {
                         DialogAuth.newInstance(
                             AuthViewModel.DIALOG_IN,
-                            "Для установки лайков необходимо авторизоваться"
-                        ).show(childFragmentManager, "TAG")
+                            getString(R.string.need_auth_error) // Локализованная строка
+                        ).show(childFragmentManager, null)
                     }
                 }
 
-                override fun onEdit(post: Post) {
-                    // Edit functionality here
-                }
-
-                override fun onRemove(post: Post) {
-                    // Remove functionality here
-                }
 
                 override fun playAudio(link: String) {
                     if (binding!!.playAudio.isChecked) {

@@ -26,8 +26,7 @@
                 android:contentDescription="@string/description_post_author_avatar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/avatar_new_user_24"
-                 />
+                tools:src="@drawable/avatar_new_user_24" />
 
             <TextView
                 android:id="@+id/author"
@@ -108,8 +107,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:src="@drawable/play_arrow_24"
                     android:contentDescription="@string/play_video"
+                    android:src="@drawable/play_arrow_24"
                     android:visibility="gone" />
 
                 <ImageView
@@ -117,8 +116,8 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_marginTop="@dimen/common_spacing"
-                    android:src="@drawable/play_circle_70"
                     android:contentDescription="@string/play_audio"
+                    android:src="@drawable/play_circle_70"
                     android:visibility="gone" />
 
                 <VideoView

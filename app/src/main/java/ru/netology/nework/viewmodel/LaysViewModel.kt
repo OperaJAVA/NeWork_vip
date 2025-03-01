@@ -377,7 +377,7 @@ class LaysViewModel @Inject constructor(
                 eventOwner = true,
             )
 
-       return _event.value
+        return _event.value
     }
 
     fun getPost(text: String): Post? {

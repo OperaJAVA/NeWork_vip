@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">NeWork</string>
     <string name="description_post_like">Лайки</string>
     <string name="description_post_share">Поделиться</string>
@@ -87,7 +88,6 @@
     <string name="cur_time">НВ</string>
     <string name="format_date">__.__.____</string>
 
-
     <string name="logout_confirmation">Выйти из аккаунта?</string>
     <string name="logout_message">Вы вышли из аккаунта.</string>
 
@@ -95,4 +95,26 @@
     <string name="file_size_exceeded">Размер вложения превышает максимально допустимый 15Мб!</string>
     <string name="invalid_file_format">Неправильный формат файла, загрузите аудио файл!</string>
 
+    <string name="auth_required_for_likes">Для установки лайков нужно авторизоваться</string>
+    <string name="auth_required_for_participation">Для добавления в список участников нужно авторизоваться</string>
+    <string name="auth_required_for_event_creation">Для добавления события нужно авторизоваться</string>
+    <string name="auth_error">Ошибка авторизации, выполните вход</string>
+    <string name="general_error">Произошла ошибка!</string>
+    <string name="unsupported_media_type_error">Неправильный формат файла!</string>
+    <string name="network_error">Ошибка сети!</string>
+    <string name="not_found_error">Запись не найдена!</string>
+    <string name="bad_request_error">Неправильный запрос!</string>
+
+    <string name="map_initialization_error">Ошибка инициализации карты!</string>
+    <string name="marker_set_success">Метка успешно установлена!</string>
+    <string name="marker_set_error">Ошибка установки метки!</string>
+
+    <string name="remove_job_header">Удаление записи о работе</string>
+    <string name="remove_job_info">Вы уверены, что хотите удалить запись?</string>
+    <string name="date_picker_start">Выберите дату начала</string>
+    <string name="date_picker_end">Выберите дату окончания</string>
+
+    <string name="error_network">Ошибка сети</string>
+    <string name="error_db">Ошибка базы данных</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
 </resources>

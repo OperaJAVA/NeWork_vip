@@ -137,6 +137,7 @@
                 android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
+
     <ProgressBar
         android:id="@+id/status_reg"
         android:layout_width="wrap_content"

@@ -56,6 +56,11 @@ class ScreenEvents : Fragment() {
             ).show()
         }
 
+        fun onDestroyView() {
+            super.onDestroyView()
+            binding = null // Зануляем binding для предотвращения утечек памяти
+        }
+
         val adapterEvents = AdapterEventsList(object : OnEventsListener {
             override fun onLike(event: Event) {
                 if (userAuth) {
@@ -63,7 +68,7 @@ class ScreenEvents : Fragment() {
                 } else {
                     DialogAuth.newInstance(
                         AuthViewModel.DIALOG_IN,
-                        "Для установки лайков нужно авторизоваться"
+                        getString(R.string.auth_required_for_likes)
                     )
                         .show(childFragmentManager, "TAG")
                 }
@@ -111,7 +116,7 @@ class ScreenEvents : Fragment() {
                 } else {
                     DialogAuth.newInstance(
                         AuthViewModel.DIALOG_IN,
-                        "Для добавления в список участников нужно авторизоваться"
+                        getString(R.string.auth_required_for_participation)
                     )
                         .show(childFragmentManager, "TAG")
                 }
@@ -165,11 +170,11 @@ class ScreenEvents : Fragment() {
                 is FeedModelState.Unauthorized -> {
                     userAuth = false
                     myID = null
-                    showBar("Ошибка авторизации, выполните вход")
+                    showBar(getString(R.string.auth_error))
                 }
 
                 is FeedModelState.Error -> {
-                    showBar("Произошла ошибка!")
+                    showBar(getString(R.string.general_error))
                 }
 
                 else -> {
@@ -223,7 +228,7 @@ class ScreenEvents : Fragment() {
             } else {
                 DialogAuth.newInstance(
                     AuthViewModel.DIALOG_IN,
-                    "Для добавления события нужно авторизоваться"
+                    getString(R.string.auth_required_for_event_creation)
                 )
                     .show(childFragmentManager, "TAG")
             }

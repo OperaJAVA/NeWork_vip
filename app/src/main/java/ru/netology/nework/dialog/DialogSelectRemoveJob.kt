@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import ru.netology.nework.R
-
 import ru.netology.nework.activity.HIDE
 import ru.netology.nework.activity.REMOVE_JOB
 import ru.netology.nework.databinding.SelectDateBinding
@@ -58,10 +57,9 @@ class DialogSelectRemoveJob : DialogFragment() {
         idJob = args.getLong(ID_JOB)
 
         with(binding!!) {
-
             if (sel == REMOVE_JOB) {
-                fieldHeader.text = "Удаление записи о работе"
-                fieldInfo.text = "Вы уверены, что хотите удалить запись?"
+                fieldHeader.text = getString(R.string.remove_job_header)
+                fieldInfo.text = getString(R.string.remove_job_info)
                 fieldInfo.textSize = 20F
                 fieldStartDate.visibility = HIDE
                 fieldEndDate.visibility = HIDE
@@ -113,9 +111,11 @@ class DialogSelectRemoveJob : DialogFragment() {
                     }
                 }
             }
+
             btnChanel.setOnClickListener {
                 dismiss()
             }
+
             btnOk.setOnClickListener {
                 if (sel == REMOVE_JOB) {
                     listener?.returnIdJob(idJob!!)
@@ -135,7 +135,6 @@ class DialogSelectRemoveJob : DialogFragment() {
         return binding!!.root
     }
 
-
     private var datePickerDialog =
         DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             val dateAndTime = Calendar.getInstance()
@@ -152,10 +151,10 @@ class DialogSelectRemoveJob : DialogFragment() {
             }
         }
 
-    private fun getDateForServer(dateTime: String): String{
+    private fun getDateForServer(dateTime: String): String {
         val date = dateTime.subSequence(0, 10)
         val time = dateTime.subSequence(11, 16)
-        return  "${date}T${time}:33.874Z"
+        return "${date}T${time}:33.874Z"
     }
 
     override fun onStart() {
@@ -165,7 +164,6 @@ class DialogSelectRemoveJob : DialogFragment() {
             WindowManager.LayoutParams.WRAP_CONTENT
         )
     }
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -180,6 +178,4 @@ class DialogSelectRemoveJob : DialogFragment() {
         super.onDetach()
         listener = null
     }
-
 }
-

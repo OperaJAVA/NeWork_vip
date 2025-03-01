@@ -41,7 +41,7 @@ class AuthFragment : Fragment() {
             if (binding?.fieldLogin?.editText?.text.isNullOrEmpty() ||
                 binding?.fieldPass?.editText?.text.isNullOrEmpty()
             ) {
-                showSnackbar("Все поля должны быть заполнены!")
+                showSnackbar(getString(R.string.error_empty_fields))
             } else {
                 pressBtn = true
                 val login = binding?.fieldLogin?.editText?.text.toString()
@@ -66,21 +66,21 @@ class AuthFragment : Fragment() {
                     findNavController().popBackStack()
                 } else {
                     AuthViewModel.userAuth = false
-                    showSnackbar("Такого пользователя нет!")
+                    showSnackbar(getString(R.string.error_user_not_found))
                 }
             }
         }
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             if (AuthViewModel.userAuth) {
-                showSnackbar("Выполнен вход в аккаунт")
+                showSnackbar(getString(R.string.login_success))
                 findNavController().navigateUp()
             }
             if (state is FeedModelState.State) {
                 when {
-                    state.error400 -> showSnackbar("Неправильный пароль!")
-                    state.error404 -> showSnackbar("Пользователь не зарегистрирован!")
-                    state.error -> showSnackbar("Проверьте ваше подключение к сети!")
+                    state.error400 -> showSnackbar(getString(R.string.error_incorrect_password))
+                    state.error404 -> showSnackbar(getString(R.string.error_user_not_registered))
+                    state.error -> showSnackbar(getString(R.string.error_check_connection))
                 }
                 binding?.statusAuth?.isVisible = state.loading
             }

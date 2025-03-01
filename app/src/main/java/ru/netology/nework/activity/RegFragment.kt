@@ -97,12 +97,12 @@ class RegFragment : Fragment() {
             binding.fieldConfirm.editText?.text.isNullOrEmpty() ||
             binding.fieldName.editText?.text.isNullOrEmpty()
         ) {
-            showBar("Все поля должны быть заполнены!")
+            showBar(getString(R.string.error_empty_fields))
             return
         }
 
         if (binding.fieldConfirm.editText?.text.toString() != binding.fieldPass.editText?.text.toString()) {
-            showBar("Поля 'confirm' и 'password' содержат разные значения!")
+            showBar(getString(R.string.error_password_mismatch))
             return
         }
 
@@ -113,7 +113,7 @@ class RegFragment : Fragment() {
             viewModel.getRegFromServer(login, pass, name, it)
             pressBtn = true
         } ?: run {
-            showBar("Необходимо загрузить фото для профиля!")
+            showBar(getString(R.string.error_photo_required))
         }
     }
 
@@ -125,7 +125,7 @@ class RegFragment : Fragment() {
                 }
 
                 is FeedModelState.Error -> {
-                    showBar("Произошла ошибка! Проверьте подключение к сети.")
+                    showBar(getString(R.string.error_occurred))
                     binding.statusReg.isVisible = false
                 }
 

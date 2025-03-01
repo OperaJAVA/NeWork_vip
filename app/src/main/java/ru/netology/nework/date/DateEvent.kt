@@ -11,6 +11,7 @@ data class DateEvent(
     val dateForSending: String? = null,
     val meetingType: MeetingType = MeetingType.ONLINE
 )
+
 // Функция, возвращающая текущее время в формате "yyyy-MM-dd HH:mm:ss"
 fun getTime(): String {
     val currentTime = System.currentTimeMillis()

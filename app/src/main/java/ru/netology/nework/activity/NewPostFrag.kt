@@ -18,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.core.net.toFile
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
@@ -223,7 +224,7 @@ class NewPostFrag : Fragment() {
                                 viewModelLays.setImageGroup()
                             } else {
                                 viewModelLays.setTypeAttach(null)
-                                context?.toast("Размер вложения превышает максимально допустимый 15Мб!")
+                                requireContext().toast(getString(R.string.file_size_exceeded))
                             }
 
                         }
@@ -234,7 +235,7 @@ class NewPostFrag : Fragment() {
                                 val content = getContentLoading(_uri, "audio/")
                                 content?.let { cont ->
                                     if (cont.length!! > MAX_SIZE_FILE) {
-                                        context?.toast("Размер вложения превышает максимально допустимый 15Мб!")
+                                        requireContext().toast(getString(R.string.file_size_exceeded))
                                         return@registerForActivityResult
                                     }
                                     viewModelLays.changeMedia(cont)
@@ -242,7 +243,7 @@ class NewPostFrag : Fragment() {
                                     return@registerForActivityResult
                                 }
                                 viewModelLays.setTypeAttach(null)
-                                context?.toast("Неправильный формат файла, загрузите аудио файл!")
+                                requireContext().toast(getString(R.string.invalid_file_format))
                             }
 
                         }
@@ -253,7 +254,7 @@ class NewPostFrag : Fragment() {
                                 val content = getContentLoading(_uri, "video/")
                                 content?.let { cont ->
                                     if (cont.length!! > MAX_SIZE_FILE) {
-                                        context?.toast("Размер вложения превышает максимально допустимый 15Мб!")
+                                        requireContext().toast(getString(R.string.file_size_exceeded))
                                         return@registerForActivityResult
                                     }
                                     viewModelLays.changeMedia(cont)
@@ -261,7 +262,7 @@ class NewPostFrag : Fragment() {
                                     return@registerForActivityResult
                                 }
                                 viewModelLays.setTypeAttach(null)
-                                context?.toast("Неправильный формат файла, загрузите видео файл!")
+                                requireContext().toast(getString(R.string.invalid_file_format))
                             }
                         }
 
@@ -330,11 +331,13 @@ class NewPostFrag : Fragment() {
                     binding.btnClear.visibility = View.GONE
                     binding.progress.isVisible = true
                 }
+
                 is FeedModelState.Success<*> -> {
                     binding.btnClear.visibility = View.VISIBLE
                     binding.progress.isVisible = false
                     // Обработка успешного состояния
                 }
+
                 is FeedModelState.Error -> {
                     binding.btnClear.visibility = View.VISIBLE
                     binding.progress.isVisible = false
@@ -516,7 +519,7 @@ class NewPostFrag : Fragment() {
         }
     }
 
-    private fun Context.toast(message: CharSequence) =
+    private fun Context.toast(@StringRes message: String) =
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
     @Suppress("DEPRECATION")

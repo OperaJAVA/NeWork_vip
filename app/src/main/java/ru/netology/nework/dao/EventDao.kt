@@ -12,6 +12,7 @@ import ru.netology.nework.entity.EventEntity
 interface EventDao {
     @Query("SELECT * FROM EventsEntity ORDER BY id DESC")
     fun getPagingSource(): PagingSource<Int, EventEntity>
+
     @Query("SELECT * FROM EventsEntity WHERE authorId = :id ORDER BY id DESC")
     fun getByAuthorEvents(id: Long): Flow<List<EventEntity>>
 

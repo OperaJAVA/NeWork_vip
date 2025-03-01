@@ -68,9 +68,11 @@ class EventsViewModel @Inject constructor(
                     is ru.netology.nework.error.ApiError403 -> {
                         _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
+
                     is ru.netology.nework.error.ApiError404 -> {
                         _dataState.value = FeedModelState.NotFound // Не найдено
                     }
+
                     else -> {
                         _dataState.value = FeedModelState.Error // Общая ошибка
                     }
@@ -97,9 +99,11 @@ class EventsViewModel @Inject constructor(
                     is ru.netology.nework.error.ApiError403 -> {
                         _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
+
                     is ru.netology.nework.error.ApiError415 -> {
                         _dataState.value = FeedModelState.UnsupportedMediaType // Ошибка 415
                     }
+
                     else -> {
                         _dataState.value = FeedModelState.Error // Общая ошибка
                     }
@@ -119,9 +123,11 @@ class EventsViewModel @Inject constructor(
                     is ru.netology.nework.error.ApiError403 -> {
                         _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
+
                     is ru.netology.nework.error.ApiError404 -> {
                         _dataState.value = FeedModelState.NotFound // Не найдено
                     }
+
                     else -> {
                         _dataState.value = FeedModelState.Error // Общая ошибка
                     }
@@ -141,9 +147,11 @@ class EventsViewModel @Inject constructor(
                     is ru.netology.nework.error.ApiError403 -> {
                         _dataState.value = FeedModelState.Unauthorized // Ошибка авторизации
                     }
+
                     is ru.netology.nework.error.ApiError404 -> {
                         _dataState.value = FeedModelState.NotFound // Не найдено
                     }
+
                     else -> {
                         _dataState.value = FeedModelState.Error // Общая ошибка
                     }
