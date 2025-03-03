@@ -35,7 +35,7 @@ class YaKit @Inject constructor(
         yandexMapsKitFactory?.onStart()
         mapView?.onStart()
 
-        // Пример использования Toast для отображения сообщения
+        // Используем Toast для отображения сообщения об инициализации карты
         Toast.makeText(context, R.string.map_initialization_error, Toast.LENGTH_SHORT).show()
     }
 
@@ -57,9 +57,9 @@ class YaKit @Inject constructor(
             ImageProvider.fromResource(context, marker)
         ) // Добавляем метку со значком
         placemarkMapObject.opacity = 0.5f // Устанавливаем прозрачность метке
-        placemarkMapObject.setText("Здесь!") // Устанавливаем текст сверху метки
+        placemarkMapObject.setText(context.getString(R.string.marker_position_text)) // Устанавливаем текст сверху метки
 
-        // Пример использования Toast для отображения сообщения
+        // Используем Toast для отображения сообщения о добавлении метки
         Toast.makeText(context, R.string.marker_set_success, Toast.LENGTH_SHORT).show()
     }
 

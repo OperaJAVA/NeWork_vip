@@ -21,7 +21,7 @@
     <string name="remove">Удалить</string>
     <string name="edit_post">Редактировать</string>
     <string name="retry_loading">Перезагрузить</string>
-    <string name="error_loading">Нет соединения</string>
+    <string name="error_loading">Ошибка загрузки данных</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="login">Логин</string>
@@ -117,4 +117,5 @@
     <string name="error_network">Ошибка сети</string>
     <string name="error_db">Ошибка базы данных</string>
     <string name="error_unknown">Неизвестная ошибка</string>
+
 </resources>

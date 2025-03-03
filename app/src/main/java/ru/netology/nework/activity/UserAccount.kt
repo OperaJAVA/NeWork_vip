@@ -87,7 +87,7 @@ class UserAccount : Fragment() {
                 } else {
                     DialogAuth.newInstance(
                         AuthViewModel.DIALOG_IN,
-                        "Для установки лайков нужно авторизоваться"
+                        getString(R.string.auth_required)
                     ).show(childFragmentManager, "TAG")
                 }
             }
@@ -98,7 +98,7 @@ class UserAccount : Fragment() {
                     putExtra(Intent.EXTRA_TEXT, post.content)
                     type = "text/plain"
                 }
-                val shareIntent = Intent.createChooser(intent, "Share Post")
+                val shareIntent = Intent.createChooser(intent, getString(R.string.share_post))
                 startActivity(shareIntent)
             }
 
@@ -178,37 +178,47 @@ class UserAccount : Fragment() {
                 is FeedModelState.Loading -> {
                     // Состояние загрузки
                 }
+
                 is FeedModelState.Error -> {
                     Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
                         .setAction(R.string.retry_loading) { viewModelUser.getUserJobs(idUser) }
                         .show()
                 }
+
                 is FeedModelState.NotFound -> {
-                    showBar("Пользователь не найден!")
+                    showBar(getString(R.string.user_not_found))
                 }
+
                 is FeedModelState.Unauthorized -> {
-                    showBar("Ошибка авторизации!")
+                    showBar(getString(R.string.auth_error))
                 }
+
                 is FeedModelState.BadRequest -> {
-                    showBar("Неверный запрос!")
+                    showBar(getString(R.string.bad_request))
                 }
+
                 is FeedModelState.NetworkError -> {
-                    showBar("Ошибка сети!")
+                    showBar(getString(R.string.network_error))
                 }
+
                 is FeedModelState.Refreshing -> {
                     // Состояние обновления
                 }
+
                 is FeedModelState.Success<*> -> {
                     // Успешное состояние
                 }
+
                 is FeedModelState.AuthStatus -> {
                     // Обработка статуса аутентификации
                 }
+
                 is FeedModelState.State -> {
                     // Обработка состояния
                 }
+
                 FeedModelState.UnsupportedMediaType -> {
-                    showBar("Неподдерживаемый тип медиа!")
+                    showBar(getString(R.string.unsupported_media_type))
                 }
             }
         }
@@ -221,12 +231,14 @@ class UserAccount : Fragment() {
                     showListJobs(true)
                     true
                 }
+
                 R.id.wall -> {
                     viewModelUser.setStatusShowListJobs(false)
                     showListJobs(false)
                     adapterPosts.submitList(viewModelPosts.userWall.value)
                     true
                 }
+
                 else -> false
             }
         }

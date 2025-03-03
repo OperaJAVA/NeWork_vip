@@ -67,7 +67,6 @@ class UserPostViewHolder(
                             Glide.with(imageView)
                                 .load(post.attachment.url)
                                 .placeholder(R.drawable.ic_loading_100dp)
-                                //.error(R.drawable.ic_error_100dp)
                                 .timeout(180_000)
                                 .into(imageView)
                         }

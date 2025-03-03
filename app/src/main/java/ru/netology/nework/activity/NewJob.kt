@@ -99,10 +99,9 @@ class NewJob : Fragment() {
                     binding?.progressLoad?.isVisible = false
                     showBar(getString(R.string.error_not_found))
                 }
-                // Можно добавить обработку других состояний, если они есть
+
                 is FeedModelState.Success<*> -> {
                     binding?.progressLoad?.isVisible = false
-                    // Дополнительная логика для успешного состояния
                 }
 
                 else -> {

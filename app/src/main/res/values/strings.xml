@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="need_auth_error">To add to the list of participants you need to log in</string>
+    <string name="need_auth_error" translatable="false">To add to the list of participants you need to log in</string>
     <string name="app_name">NeWork</string>
     <string name="description_post_like">Like</string>
     <string name="description_post_share">Share</string>
@@ -119,5 +119,14 @@
     <string name="map_initialization_error" />
     <string name="remove_job_header" />
     <string name="remove_job_info" />
+    <string name="unsupported_media_type" />
+    <string name="bad_request" />
+    <string name="user_not_found" />
+    <string name="share_post" />
+    <string name="auth_required" />
+    <string name="marker_position_text" />
+    <string name="error_network" />
+    <string name="error_db" />
+    <string name="error_unknown" />
 
 </resources>
